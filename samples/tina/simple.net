@@ -1,0 +1,4 @@
+net simple
+tr t1 a -> b
+tr t2 a -> c
+pl a (2)
