@@ -4,19 +4,17 @@ set(SOURCES
     mc/live.cc
     mc/post.cc
     mc/pre.cc
+    mc/unit.cc
     mc/work.cc
     parsers/bpn.cc
     parsers/helpers.cc
     parsers/parse_error.cc
     parsers/parse.cc
-    parsers/prod.cc
-    parsers/tina.cc
-    parsers/xml.cc
     pn/module.cc
     pn/net.cc
     pn/place.cc
     pn/transition.cc
     )
 
-add_executable(pnmc ${SOURCES})
-target_link_libraries(pnmc ${Boost_LIBRARIES})
+add_executable(caesar.sdd ${SOURCES})
+target_link_libraries(caesar.sdd ${Boost_LIBRARIES})

@@ -16,8 +16,11 @@ struct place
   /// @brief This place's marking.
   unsigned int marking;
 
+  /// @brief The unit this places belongs to.
+  const unsigned int unit;
+
   /// @brief Constructor.
-  place(const std::string& id, unsigned int m);
+  place(const std::string& id, unsigned int m, unsigned int u);
 };
 
 /*------------------------------------------------------------------------------------------------*/

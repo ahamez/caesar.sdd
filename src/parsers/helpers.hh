@@ -25,12 +25,6 @@ struct kw
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Split a range with a delimiter.
-std::vector<std::string>
-split(std::string::const_iterator cit, std::string::const_iterator cend, char delim);
-
-/*------------------------------------------------------------------------------------------------*/
-
 }} // namespace pnmc::parsers
 
 #endif // _PNMC_PN_PARSERS_HELPERS_HH_

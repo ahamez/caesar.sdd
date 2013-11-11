@@ -13,9 +13,7 @@ enum class input_format {bpn, prod, tina, xml};
 struct pnmc_configuration
 {
   std::string file_name;
-  input_format file_type;
   bool read_stdin;
-  bool delete_file;
 
   bool order_show;
   bool order_force_flat;
@@ -26,6 +24,7 @@ struct pnmc_configuration
   bool show_hash_tables_stats;
 
   bool compute_dead_transitions;
+  bool compute_concurrent_units;
 };
 
 /*------------------------------------------------------------------------------------------------*/

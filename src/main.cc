@@ -65,11 +65,7 @@ main(int argc, char** argv)
   try
   {
     auto in = file_or_cin(conf);
-    const auto net_ptr = parsers::parse(conf, *in);
-    if (conf.delete_file and not conf.read_stdin)
-    {
-      std::remove(conf.file_name.c_str());
-    }
+    const auto net_ptr = parsers::parse(*in);
     mc::work(conf, *net_ptr);
   }
   catch (const unreadable_file&)

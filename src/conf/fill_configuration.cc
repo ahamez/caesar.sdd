@@ -18,41 +18,7 @@ namespace pnmc { namespace conf {
 namespace po = boost::program_options;
 
 const std::string version
-  = "Petri Net Model Checker (built " + std::string(__DATE__) + " " + std::string(__TIME__)  + ")";
-
-/*------------------------------------------------------------------------------------------------*/
-
-input_format
-file_type(const po::variables_map& vm)
-{
-  const bool bpn = vm.count("bpn");
-  const bool prod = vm.count("prod");
-  const bool tina = vm.count("tina");
-
-  if (not (bpn or prod or tina))
-  {
-    return input_format::xml;
-  }
-  else if (not (bpn xor prod xor tina))
-  {
-    throw po::error("Can specify only one input format.");
-  }
-  else
-  {
-    if (bpn)
-    {
-      return input_format::bpn;
-    }
-    else if (prod)
-    {
-      return input_format::prod;
-    }
-    else // tina
-    {
-      return input_format::tina;
-    }
-  }
-}
+  = "Caesar.SDD (built " + std::string(__DATE__) + " " + std::string(__TIME__)  + ")";
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -67,19 +33,11 @@ fill_configuration(int argc, char** argv)
     ( "version"               , "Show version")
   ;
 
-  po::options_description file_options("Input file options");
-  file_options.add_options()
-    ("bpn"                      , "Parse BPN format")
-    ("prod"                     , "Parse PROD format")
-    ("tina"                     , "Parse TINA format")
-    ("xml"                      , "Parse pnmc's XML format (default)")
-  ;
-
   po::options_description order_options("Order options");
   order_options.add_options()
     ("show-order"             , "Show the order")
     ("flat"                   , "Don't use hierarchy informations")
-    ("order-min-height"       , po::value<unsigned int>()->default_value(10)
+    ("order-min-height"       , po::value<unsigned int>()->default_value(1)
                               , "Minimal number of variables at every level of the SDD")
   ;
 
@@ -94,16 +52,16 @@ fill_configuration(int argc, char** argv)
     ("show-time"                , "Show miscellaneous execution times")
   ;
 
-  po::options_description petri_options("Petri net options");
-  petri_options.add_options()
-    ("dead-transitions"         , "Compute dead transitions")
+  po::options_description cadp_options("CADP options");
+  cadp_options.add_options()
+    ("dead"         , "Compute dead transitions")
+    ("unit"         , "Compute concurrent units")
   ;
 
 
   po::options_description hidden_options("Hidden options");
   hidden_options.add_options()
     ("input-file", po::value<std::string>(), "The Petri net file to analyse")
-    ("delete-file", "Delete model file after reading it")
   ;
 
   po::positional_options_description p;
@@ -112,16 +70,17 @@ fill_configuration(int argc, char** argv)
   po::options_description cmdline_options;
   cmdline_options
   	.add(general_options)
-    .add(file_options)
     .add(order_options)
     .add(hom_options)
-    .add(petri_options)
+    .add(cadp_options)
     .add(stats_options)
   	.add(hidden_options);
   
   po::variables_map vm;
   po::parsed_options parsed = po::command_line_parser(argc, argv)
                                     .options(cmdline_options)
+                                    .style ( po::command_line_style::default_style
+                                           | po::command_line_style::allow_long_disguise)
                                     .positional(p)
                                     .allow_unregistered()
                                     .run();
@@ -136,10 +95,9 @@ fill_configuration(int argc, char** argv)
     std::cout << version << std::endl;
     std::cout << "Usage: " << argv[0] << " [options] file " << std::endl << std::endl;
     std::cout << general_options << std::endl;
-    std::cout << file_options << std::endl;
     std::cout << order_options << std::endl;
     std::cout << hom_options << std::endl;
-    std::cout << petri_options << std::endl;
+    std::cout << cadp_options << std::endl;
     std::cout << stats_options << std::endl;
     return boost::optional<pnmc_configuration>();
   }
@@ -156,16 +114,15 @@ fill_configuration(int argc, char** argv)
   }
 
   conf.file_name = vm["input-file"].as<std::string>();
-  conf.file_type = file_type(vm);
   conf.read_stdin = conf.file_name == "-";
-  conf.delete_file = vm.count("delete-file");
   conf.order_show = vm.count("show-order");
   conf.order_force_flat = vm.count("flat");
   conf.order_min_height = vm["order-min-height"].as<unsigned int>();
   conf.show_relation = vm.count("show-relation");
   conf.show_hash_tables_stats = vm.count("show-hash-stats");
   conf.show_time = vm.count("show-time");
-  conf.compute_dead_transitions = vm.count("dead-transitions");
+  conf.compute_dead_transitions = vm.count("dead");
+  conf.compute_concurrent_units = vm.count("unit");
 
   return conf;
 }

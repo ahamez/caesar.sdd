@@ -252,7 +252,7 @@ struct prefix
     }
     if (manip.res_)
     {
-      *manip.res_ = s;
+      *manip.res_ = s.substr(1);
     }
 
     return in;
@@ -285,6 +285,8 @@ bpn(std::istream& in)
   unsigned int nb_units;
   in >> kw("units") >> sharp(nb_units) >> interval();
 
+  net.units.resize(nb_units);
+
   // units
   unsigned int root_module_nb;
   in >> kw("root") >> kw("unit") >> uint(root_module_nb);
@@ -296,14 +298,18 @@ bpn(std::istream& in)
     unsigned int nb_nested_units, first, last;
     std::string module_name;
     in >> prefix('U', module_name) >> sharp() >> interval(first, last) >> sharp(nb_nested_units);
+//    ++net.nb_units;
 
-    pn::module_node m(module_name);
+    const unsigned int module_nb = std::stoi(module_name);
+
+    pn::module_node m("U" + module_name);
     for (unsigned int i = first; i <= last; ++i)
     {
-      const auto& p = net.add_place(std::to_string(i), 0);
+      const auto& p = net.add_place(std::to_string(i), 0, module_nb);
       m.add_module(pn::make_module(p));
+      net.units[module_nb].push_back(p);
     }
-    const auto insertion = modules.emplace( module_name
+    const auto insertion = modules.emplace( "U" + module_name
                                           , std::make_pair( pn::make_module(m)
                                                           , std::vector<std::string>()));
 
@@ -358,7 +364,7 @@ bpn(std::istream& in)
     --nb_transitions;
   }
 
-  net.add_place(std::to_string(initial_place), 1);
+  net.add_place(std::to_string(initial_place), 1, root_module_nb);
 
   for (auto& kv : modules)
   {

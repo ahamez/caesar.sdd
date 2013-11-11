@@ -1,6 +1,8 @@
 #ifndef _PNMC_PN_NET_HH_
 #define _PNMC_PN_NET_HH_
 
+#include <deque>
+
 #pragma GCC diagnostic push
 #if defined(__GNUC__) && !defined(__clang__)
 # pragma GCC diagnostic ignored "-Wunused-local-typedefs"
@@ -87,6 +89,10 @@ public:
   /// @brief The hierarchical description, if any, of this Petri net.
   module modules;
 
+  /// @brief BPN units.
+  std::deque<std::deque<std::reference_wrapper<const place>>> units;
+//  std::size_t nb_units;
+
   /// @brief Default constructor.
   net();
 
@@ -94,7 +100,7 @@ public:
   ///
   /// If the place already exist, its marking is updated.
   const place&
-  add_place(const std::string& id, unsigned int marking);
+  add_place(const std::string& id, unsigned int marking, unsigned int unit);
 
   /// @brief Add a transition.
   ///

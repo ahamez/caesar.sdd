@@ -66,18 +66,18 @@ struct update_place
 /*------------------------------------------------------------------------------------------------*/
 
 net::net()
-  : name(), places_set(), transitions_set(), modules(nullptr)
+  : name(), places_set(), transitions_set(), modules(nullptr), units()
 {}
 
 /*------------------------------------------------------------------------------------------------*/
 
 const place&
-net::add_place(const std::string& pid, unsigned int marking)
+net::add_place(const std::string& pid, unsigned int marking, unsigned int unit)
 {
   const auto cit = places_by_id().find(pid);
   if (cit == places_by_id().cend())
   {
-    return *places_set.get<insertion_index>().emplace_back(pid, marking).first;
+    return *places_set.get<insertion_index>().emplace_back(pid, marking, unit).first;
   }
   else
   {
@@ -114,7 +114,8 @@ net::add_post_place(const std::string& tid, const std::string& post, unsigned in
   transitions_set.modify(it, add_post_place_to_transition(valuation, post));
   if (places_by_id().find(post) == places_by_id().end())
   {
-    add_place(post, 0);
+//    add_place(post, 0);
+    assert(false);
   }
 }
 
@@ -127,7 +128,8 @@ net::add_pre_place(const std::string& tid, const std::string& pre, unsigned int 
   transitions_set.modify(it, add_pre_place_to_transition(valuation, pre));
   if (places_by_id().find(pre) == places_by_id().end())
   {
-    add_place(pre, 0);
+//    add_place(pre, 0);
+    assert(false);
   }
 }
 

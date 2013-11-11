@@ -9,6 +9,7 @@
 #include "mc/live.hh"
 #include "mc/post.hh"
 #include "mc/pre.hh"
+#include "mc/unit.hh"
 #include "mc/work.hh"
 
 namespace pnmc { namespace mc {
@@ -267,6 +268,11 @@ work(const conf::pnmc_configuration& conf, const pn::net& net)
     {
       std::cout << "No dead transitions" << std::endl;
     }
+  }
+
+  if (conf.compute_concurrent_units)
+  {
+    compute_concurrent_units(conf, net, o, m);
   }
 
   if (conf.show_hash_tables_stats)
