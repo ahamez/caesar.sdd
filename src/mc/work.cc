@@ -1,5 +1,6 @@
 #include <cassert>
 #include <chrono>
+#include <deque>
 #include <iostream>
 #include <set>
 #include <utility> // pair
@@ -243,30 +244,11 @@ work(const conf::pnmc_configuration& conf, const pn::net& net)
 
   const SDD m = state_space(conf, o, m0, h);
 
-  const auto n = sdd::count_combinations(m);
-  std::cout << n.template convert_to<long double>() << " states" << std::endl;
-
   if (conf.compute_dead_transitions)
   {
-    std::deque<std::string> dead_transitions;
     for (std::size_t i = 0; i < net.transitions().size(); ++i)
     {
-      if (not transitions_bitset[i])
-      {
-        dead_transitions.push_back(net.get_transition_by_index(i).id);
-      }
-    }
-
-    if (not dead_transitions.empty())
-    {
-      std::cout << dead_transitions.size() << " dead transition(s): ";
-      std::copy( dead_transitions.cbegin(), std::prev(dead_transitions.cend())
-               , std::ostream_iterator<std::string>(std::cout, ","));
-      std::cout << *std::prev(dead_transitions.cend()) << std::endl;
-    }
-    else
-    {
-      std::cout << "No dead transitions" << std::endl;
+      std::cout << (!transitions_bitset[i]) << "\n";
     }
   }
 

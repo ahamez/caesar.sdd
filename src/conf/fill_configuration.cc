@@ -108,13 +108,11 @@ fill_configuration(int argc, char** argv)
     return boost::optional<pnmc_configuration>();
   }
 
-  if (not vm.count("input-file"))
+  conf.read_stdin = (not vm.count("input-file") or vm["input-file"].as<std::string>() == "-");
+  if (not conf.read_stdin)
   {
-    throw po::error("No file specified.");
+    conf.file_name = vm["input-file"].as<std::string>();
   }
-
-  conf.file_name = vm["input-file"].as<std::string>();
-  conf.read_stdin = conf.file_name == "-";
   conf.order_show = vm.count("show-order");
   conf.order_force_flat = vm.count("flat");
   conf.order_min_height = vm["order-min-height"].as<unsigned int>();

@@ -79,13 +79,10 @@ net::add_place(const std::string& pid, unsigned int marking, unsigned int unit)
   {
     return *places_set.get<insertion_index>().emplace_back(pid, marking, unit).first;
   }
-  else
-  {
-    // This place was created before by add_post_place() or add_pre_place().
-    // At this time, the marking was not known. We can now update it.
-    places_set.get<id_index>().modify(cit, update_place(marking));
-    return *cit;
-  }
+  // This place was created before by add_post_place() or add_pre_place().
+  // At this time, the marking was not known. We can now update it.
+  places_set.get<id_index>().modify(cit, update_place(marking));
+  return *cit;
 }
 
 /*------------------------------------------------------------------------------------------------*/
