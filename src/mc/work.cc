@@ -5,11 +5,10 @@
 #include <set>
 #include <utility> // pair
 
-#include <sdd/sdd.hh>
-
 #include "mc/live.hh"
 #include "mc/post.hh"
 #include "mc/pre.hh"
+#include "mc/sdd.hh"
 #include "mc/unit.hh"
 #include "mc/work.hh"
 
@@ -17,23 +16,12 @@ namespace pnmc { namespace mc {
 
 namespace chrono = std::chrono;
 
-typedef sdd::conf1 sdd_conf;
-typedef sdd::SDD<sdd_conf> SDD;
-typedef sdd::homomorphism<sdd_conf> homomorphism;
-
-using sdd::Composition;
-using sdd::Fixpoint;
-using sdd::Sum;
-using sdd::ValuesFunction;
-
 /*------------------------------------------------------------------------------------------------*/
 
 struct mk_order_visitor
   : public boost::static_visitor<std::pair<std::string, sdd::order_builder<sdd_conf>>>
 {
-  using order_identifier = sdd::order_identifier<sdd_conf>;
   using result_type = std::pair<order_identifier, sdd::order_builder<sdd_conf>>;
-  using order_builder = sdd::order_builder<sdd_conf>;
 
   const conf::pnmc_configuration& conf;
   mutable unsigned int artificial_id_counter;
@@ -109,31 +97,31 @@ struct mk_order_visitor
 
 /*------------------------------------------------------------------------------------------------*/
 
-sdd::order<sdd_conf>
+order
 mk_order(const conf::pnmc_configuration& conf, const pn::net& net)
 {
   if (not conf.order_force_flat and net.modules)
   {
-    return sdd::order<sdd_conf>(boost::apply_visitor(mk_order_visitor(conf), *net.modules).second);
+    return order(boost::apply_visitor(mk_order_visitor(conf), *net.modules).second);
   }
   else
   {
-    sdd::order_builder<sdd_conf> ob;
+    order_builder ob;
     for (const auto& place : net.places())
     {
       ob.push(place.id);
     }
-    return sdd::order<sdd_conf>(ob);
+    return order(ob);
   }
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
 SDD
-initial_state(const sdd::order<sdd_conf>& order, const pn::net& net)
+initial_state(const order& o, const pn::net& net)
 {
-  return SDD(order, [&](const std::string& id)
-                        -> sdd::values::flat_set<unsigned int>
+  return SDD(o, [&](const std::string& id)
+                        -> sdd::values::bitset<64>
                        {
                          return {net.places_by_id().find(id)->marking};
                        });
@@ -142,7 +130,7 @@ initial_state(const sdd::order<sdd_conf>& order, const pn::net& net)
 /*------------------------------------------------------------------------------------------------*/
 
 homomorphism
-transition_relation( const conf::pnmc_configuration& conf, const sdd::order<sdd_conf>& o
+transition_relation( const conf::pnmc_configuration& conf, const order& o
                    , const pn::net& net, boost::dynamic_bitset<>& transitions_bitset)
 {
   chrono::time_point<chrono::system_clock> start;
@@ -151,11 +139,11 @@ transition_relation( const conf::pnmc_configuration& conf, const sdd::order<sdd_
 
   start = chrono::system_clock::now();
   std::set<homomorphism> operands;
-  operands.insert(sdd::Id<sdd_conf>());
+  operands.insert(Id<sdd_conf>());
 
   for (const auto& transition : net.transitions())
   {
-    homomorphism h_t = sdd::Id<sdd_conf>();
+    homomorphism h_t = Id<sdd_conf>();
     if (conf.compute_dead_transitions)
     {
       if (not transition.post.empty())
@@ -168,13 +156,13 @@ transition_relation( const conf::pnmc_configuration& conf, const sdd::order<sdd_
     // post actions.
     for (const auto& arc : transition.post)
     {
-      homomorphism f = ValuesFunction<sdd_conf>(o, arc.first, post(arc.second));
+      homomorphism f = ValuesFunction<sdd_conf>(o, arc.first, post());
       h_t = Composition(h_t, sdd::carrier(o, arc.first, f));
     }
     // pre actions.
     for (const auto& arc : transition.pre)
     {
-      homomorphism f = ValuesFunction<sdd_conf>(o, arc.first, pre(arc.second));
+      homomorphism f = ValuesFunction<sdd_conf>(o, arc.first, pre());
       h_t = Composition(h_t, sdd::carrier(o, arc.first, f));
     }
 
@@ -204,7 +192,7 @@ transition_relation( const conf::pnmc_configuration& conf, const sdd::order<sdd_
 /*------------------------------------------------------------------------------------------------*/
 
 SDD
-state_space( const conf::pnmc_configuration& conf, const sdd::order<sdd_conf>& o, SDD m
+state_space( const conf::pnmc_configuration& conf, const order& o, SDD m
            , homomorphism h)
 {
   chrono::time_point<chrono::system_clock> start = chrono::system_clock::now();
@@ -227,7 +215,7 @@ work(const conf::pnmc_configuration& conf, const pn::net& net)
 
   boost::dynamic_bitset<> transitions_bitset(net.transitions().size());
 
-  const sdd::order<sdd_conf>& o = mk_order(conf, net);
+  const order& o = mk_order(conf, net);
   assert(not o.empty() && "Empty order");
 
   if (conf.order_show)
@@ -251,6 +239,9 @@ work(const conf::pnmc_configuration& conf, const pn::net& net)
       std::cout << (!transitions_bitset[i]) << "\n";
     }
   }
+
+  const auto n = sdd::count_combinations(m);
+  std::cerr << n.template convert_to<long double>() << " states" << std::endl;
 
   if (conf.compute_concurrent_units)
   {

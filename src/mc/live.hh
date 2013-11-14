@@ -6,8 +6,7 @@
 
 #include <boost/dynamic_bitset.hpp>
 
-#include "sdd/values/flat_set.hh"
-#include "sdd/values_manager.hh"
+#include "sdd/values/bitset.hh"
 
 namespace pnmc { namespace mc {
 
@@ -20,8 +19,8 @@ struct live
 
   live(std::size_t, boost::dynamic_bitset<>&);
 
-  sdd::values::flat_set<unsigned int>
-  operator()(const sdd::values::flat_set<unsigned int>&)
+  sdd::values::bitset<64>
+  operator()(const sdd::values::bitset<64>&)
   const noexcept;
 };
 

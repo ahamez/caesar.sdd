@@ -4,8 +4,7 @@
 #include <functional> // hash
 #include <iosfwd>
 
-#include "sdd/values/flat_set.hh"
-#include "sdd/values_manager.hh"
+#include "sdd/values/bitset.hh"
 
 namespace pnmc { namespace mc {
 
@@ -13,19 +12,18 @@ namespace pnmc { namespace mc {
 
 struct post
 {
-  const unsigned int valuation;
-
-  post(unsigned int);
-
-  sdd::values::flat_set<unsigned int>
-  operator()(const sdd::values::flat_set<unsigned int>&)
-  const;
+  sdd::values::bitset<64>
+  operator()(const sdd::values::bitset<64>&)
+  const noexcept;
 };
 
 /// @brief Equality of two post.
-bool
+constexpr bool
 operator==(const post&, const post&)
-noexcept;
+noexcept
+{
+  return true;
+}
 
 /// @brief Textual output of a post.
 std::ostream&

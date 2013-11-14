@@ -4,8 +4,8 @@
 #include <functional> // hash
 #include <iosfwd>
 
-#include "sdd/values/flat_set.hh"
-#include "sdd/values_manager.hh"
+#include "sdd/values/bitset.hh"
+//#include "sdd/values_manager.hh"
 
 namespace pnmc { namespace mc {
 
@@ -13,18 +13,17 @@ namespace pnmc { namespace mc {
 
 struct pre
 {
-  const unsigned int valuation;
-
-  pre(unsigned int);
-
-  sdd::values::flat_set<unsigned int>
-  operator()(const sdd::values::flat_set<unsigned int>&) const;
+  sdd::values::bitset<64>
+  operator()(const sdd::values::bitset<64>&) const noexcept;
 };
 
 /// @brief Equality of two pre.
-bool
+constexpr bool
 operator==(const pre&, const pre&)
-noexcept;
+noexcept
+{
+  return true;
+}
 
 /// @brief Textual output of a pre.
 std::ostream&

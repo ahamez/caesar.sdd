@@ -14,8 +14,8 @@ live::live(std::size_t index, boost::dynamic_bitset<>& bitset)
 
 /*------------------------------------------------------------------------------------------------*/
 
-sdd::values::flat_set<unsigned int>
-live::operator()(const sdd::values::flat_set<unsigned int>& val)
+sdd::values::bitset<64>
+live::operator()(const sdd::values::bitset<64>& val)
 const noexcept
 {
   bitset[index] = true;
