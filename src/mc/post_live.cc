@@ -2,30 +2,30 @@
 
 #include <sdd/util/hash.hh>
 
-#include "mc/live.hh"
+#include "mc/post_live.hh"
 
 namespace pnmc { namespace mc {
 
 /*------------------------------------------------------------------------------------------------*/
 
-live::live(std::size_t index, boost::dynamic_bitset<>& bitset)
+post_live::post_live(std::size_t index, boost::dynamic_bitset<>& bitset)
   : index(index), bitset(bitset)
 {}
 
 /*------------------------------------------------------------------------------------------------*/
 
 sdd::values::bitset<64>
-live::operator()(const sdd::values::bitset<64>& val)
+post_live::operator()(const sdd::values::bitset<64>& val)
 const noexcept
 {
   bitset[index] = true;
-  return val;
+  return val << 1;
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
 bool
-operator==(const live& lhs, const live& rhs)
+operator==(const post_live& lhs, const post_live& rhs)
 noexcept
 {
   return lhs.index == rhs.index;
@@ -34,9 +34,9 @@ noexcept
 /*------------------------------------------------------------------------------------------------*/
 
 std::ostream&
-operator<<(std::ostream& os, const live& l)
+operator<<(std::ostream& os, const post_live& l)
 {
-  return os << "live(" << l.index << ")";
+  return os << "post_live(" << l.index << ")";
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -49,7 +49,7 @@ namespace std
 /*------------------------------------------------------------------------------------------------*/
 
 std::size_t
-hash<pnmc::mc::live>::operator()(const pnmc::mc::live& l)
+hash<pnmc::mc::post_live>::operator()(const pnmc::mc::post_live& l)
 const noexcept
 {
   std::size_t seed = 49979687;

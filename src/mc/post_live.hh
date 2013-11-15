@@ -1,5 +1,5 @@
-#ifndef _PNMC_MC_LIVE_HH
-#define _PNMC_MC_LIVE_HH
+#ifndef _PNMC_MC_POST_LIVE_HH_
+#define _PNMC_MC_POST_LIVE_HH_
 
 #include <functional> // hash
 #include <iosfwd>
@@ -12,26 +12,26 @@ namespace pnmc { namespace mc {
 
 /*------------------------------------------------------------------------------------------------*/
 
-struct live
+struct post_live
 {
   const std::size_t index;
   boost::dynamic_bitset<>& bitset;
 
-  live(std::size_t, boost::dynamic_bitset<>&);
+  post_live(std::size_t, boost::dynamic_bitset<>&);
 
   sdd::values::bitset<64>
   operator()(const sdd::values::bitset<64>&)
   const noexcept;
 };
 
-/// @brief Equality of two post.
+/// @brief Equality of two post_live.
 bool
-operator==(const live&, const live&)
+operator==(const post_live&, const post_live&)
 noexcept;
 
-/// @brief Textual output of a post.
+/// @brief Textual output of a post_live.
 std::ostream&
-operator<<(std::ostream&, const live&);
+operator<<(std::ostream&, const post_live&);
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -43,13 +43,13 @@ namespace std
 /*------------------------------------------------------------------------------------------------*/
 
 template <>
-struct hash<pnmc::mc::live>
+struct hash<pnmc::mc::post_live>
 {
-  std::size_t operator()(const pnmc::mc::live&) const noexcept;
+  std::size_t operator()(const pnmc::mc::post_live&) const noexcept;
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 
-#endif // _PNMC_MC_LIVE_HH
+#endif // _PNMC_MC_POST_LIVE_HH_

@@ -5,8 +5,8 @@
 #include <set>
 #include <utility> // pair
 
-#include "mc/live.hh"
 #include "mc/post.hh"
+#include "mc/post_live.hh"
 #include "mc/pre.hh"
 #include "mc/sdd.hh"
 #include "mc/unit.hh"
@@ -144,21 +144,29 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
   for (const auto& transition : net.transitions())
   {
     homomorphism h_t = Id<sdd_conf>();
-    if (conf.compute_dead_transitions)
+
+    if (not transition.post.empty())
     {
-      if (not transition.post.empty())
+      // post actions.
+      auto arc_cit = transition.post.begin();
+      if (conf.compute_dead_transitions)
       {
-        const auto f = ValuesFunction<sdd_conf>( o, transition.post.begin()->first
-                                               , live(transition.index, transitions_bitset));
-        h_t = sdd::carrier(o, transition.post.begin()->first, f);
+        const auto f = ValuesFunction<sdd_conf>( o, arc_cit->first
+                                               , post_live(transition.index, transitions_bitset));
+        h_t = Composition(h_t, sdd::carrier(o, arc_cit->first, f));
+      }
+      else
+      {
+        homomorphism f = ValuesFunction<sdd_conf>(o, arc_cit->first, post());
+        h_t = Composition(h_t, sdd::carrier(o, arc_cit->first, f));
+      }
+      for (++arc_cit; arc_cit != transition.post.end(); ++arc_cit)
+      {
+        homomorphism f = ValuesFunction<sdd_conf>(o, arc_cit->first, post());
+        h_t = Composition(h_t, sdd::carrier(o, arc_cit->first, f));
       }
     }
-    // post actions.
-    for (const auto& arc : transition.post)
-    {
-      homomorphism f = ValuesFunction<sdd_conf>(o, arc.first, post());
-      h_t = Composition(h_t, sdd::carrier(o, arc.first, f));
-    }
+
     // pre actions.
     for (const auto& arc : transition.pre)
     {
