@@ -1,39 +1,40 @@
 #include <ostream>
 
-#include "mc/pre.hh"
+#include "mc/places/post.hh"
 
 namespace pnmc { namespace mc {
 
 /*------------------------------------------------------------------------------------------------*/
 
 sdd::values::bitset<64>
-pre::operator()(const sdd::values::bitset<64>& val)
+post::operator()(const sdd::values::bitset<64>& val)
 const noexcept
 {
-  return val >> 1;
+  return val << 1;
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
 std::ostream&
-operator<<(std::ostream& os, const pre& p)
+operator<<(std::ostream& os, const post& p)
 {
-  return os << "pre";
+  return os << "post";
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace pnmc::mc
 
-namespace std {
+namespace std
+{
 
 /*------------------------------------------------------------------------------------------------*/
 
 std::size_t
-hash<pnmc::mc::pre>::operator()(const pnmc::mc::pre& p)
+hash<pnmc::mc::post>::operator()(const pnmc::mc::post& p)
 const noexcept
 {
-  return std::hash<unsigned int>()(3464152273);
+  return std::hash<unsigned int>()(2564450027);
 }
 
 /*------------------------------------------------------------------------------------------------*/

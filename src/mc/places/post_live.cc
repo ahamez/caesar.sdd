@@ -2,7 +2,7 @@
 
 #include <sdd/util/hash.hh>
 
-#include "mc/post_live.hh"
+#include "mc/places/post_live.hh"
 
 namespace pnmc { namespace mc {
 

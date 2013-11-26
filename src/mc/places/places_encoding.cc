@@ -5,12 +5,12 @@
 #include <set>
 #include <utility> // pair
 
-#include "mc/post.hh"
-#include "mc/post_live.hh"
-#include "mc/pre.hh"
-#include "mc/sdd.hh"
-#include "mc/unit.hh"
-#include "mc/work.hh"
+#include "mc/places/post.hh"
+#include "mc/places/post_live.hh"
+#include "mc/places/pre.hh"
+#include "mc/places/sdd.hh"
+#include "mc/places/concurrent_units.hh"
+#include "mc/places/places_encoding.hh"
 
 namespace pnmc { namespace mc {
 
@@ -216,14 +216,19 @@ state_space( const conf::pnmc_configuration& conf, const order& o, SDD m
 
 /*------------------------------------------------------------------------------------------------*/
 
+places_encoding::places_encoding(const conf::pnmc_configuration& c)
+  : conf(c)
+{}
+
 void
-work(const conf::pnmc_configuration& conf, const pn::net& net)
+places_encoding::operator()(const pn::net& net)
+const
 {
   auto manager = sdd::manager<sdd_conf>::init();
 
   boost::dynamic_bitset<> transitions_bitset(net.transitions().size());
 
-  const order& o = mk_order(conf, net);
+  const order o = mk_order(conf, net);
   assert(not o.empty() && "Empty order");
 
   if (conf.order_show)

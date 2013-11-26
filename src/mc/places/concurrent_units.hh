@@ -2,7 +2,7 @@
 #define _PNMC_MC_UNIT_HH_
 
 #include "conf/configuration.hh"
-#include "mc/sdd.hh"
+#include "mc/places/sdd.hh"
 #include "pn/net.hh"
 
 namespace pnmc { namespace mc {
@@ -10,7 +10,7 @@ namespace pnmc { namespace mc {
 /*------------------------------------------------------------------------------------------------*/
 
 void
-compute_concurrent_units( const conf::pnmc_configuration&,const pn::net&
+compute_concurrent_units( const conf::pnmc_configuration&, const pn::net&
                         , const sdd::order<sdd_conf>&, SDD);
 
 /*------------------------------------------------------------------------------------------------*/

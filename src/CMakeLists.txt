@@ -1,11 +1,13 @@
 set(SOURCES
     main.cc
     conf/fill_configuration.cc
-    mc/post.cc
-    mc/post_live.cc
-    mc/pre.cc
-    mc/unit.cc
-    mc/work.cc
+    mc/places/places_encoding.cc
+    mc/places/post.cc
+    mc/places/post_live.cc
+    mc/places/pre.cc
+    mc/places/concurrent_units.cc
+    mc/mc.cc
+    mc/mc_impl.cc
     parsers/bpn.cc
     parsers/helpers.cc
     parsers/parse_error.cc

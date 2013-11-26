@@ -3,7 +3,7 @@
 
 #include <sdd/values/bitset.hh>
 
-#include "mc/unit.hh"
+#include "mc/places/concurrent_units.hh"
 
 namespace pnmc { namespace mc {
 

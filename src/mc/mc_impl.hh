@@ -1,18 +1,26 @@
-#ifndef _PNMC_MC_WORK_HH_
-#define _PNMC_MC_WORK_HH_
+#ifndef _PNMC_MC_MC_IMPL_HH_
+#define _PNMC_MC_MC_IMPL_HH_
 
-#include "conf/configuration.hh"
 #include "pn/net.hh"
 
 namespace pnmc { namespace mc {
 
 /*------------------------------------------------------------------------------------------------*/
 
-void
-work(const conf::pnmc_configuration&, const pn::net&);
+class mc_impl
+{
+public:
+
+  virtual ~mc_impl();
+
+  virtual
+  void
+  operator()(const pn::net&)
+  const = 0;
+};
 
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace pnmc::mc
 
-#endif // _PNMC_MC_WORK_HH_
+#endif // _PNMC_MC_MC_IMPL_HH_
