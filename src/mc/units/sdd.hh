@@ -3,12 +3,12 @@
 
 #include <sdd/sdd.hh>
 
-namespace pnmc { namespace mc { namespace places {
+namespace pnmc { namespace mc { namespace units {
 
 /*------------------------------------------------------------------------------------------------*/
 
 struct sdd_conf
-  : public sdd::conf0
+  : public sdd::conf1
 {
   using Variable = unsigned int;
 };
@@ -28,6 +28,6 @@ using order            = sdd::order<sdd_conf>;
 
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace pnmc::mc::places
+}}} // namespace pnmc::mc::units
 
 #endif // _PNMC_MC_SDD_HH_

@@ -7,7 +7,7 @@
 #include "sdd/values/bitset.hh"
 //#include "sdd/values_manager.hh"
 
-namespace pnmc { namespace mc {
+namespace pnmc { namespace mc { namespace places {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -31,16 +31,16 @@ operator<<(std::ostream&, const pre&);
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::mc
+}}} // namespace pnmc::mc::places
 
 namespace std {
 
 /*------------------------------------------------------------------------------------------------*/
 
 template <>
-struct hash<pnmc::mc::pre>
+struct hash<pnmc::mc::places::pre>
 {
-  std::size_t operator()(const pnmc::mc::pre&) const noexcept;
+  std::size_t operator()(const pnmc::mc::places::pre&) const noexcept;
 };
 
 /*------------------------------------------------------------------------------------------------*/

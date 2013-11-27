@@ -5,7 +5,7 @@
 
 #include "mc/places/concurrent_units.hh"
 
-namespace pnmc { namespace mc {
+namespace pnmc { namespace mc { namespace places {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -69,4 +69,4 @@ compute_concurrent_units( const conf::pnmc_configuration& conf, const pn::net& n
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::mc
+}}} // namespace pnmc::mc::places

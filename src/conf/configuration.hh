@@ -1,19 +1,20 @@
 #ifndef _PNMC_CONF_CONFIGURATION_HH_
 #define _PNMC_CONF_CONFIGURATION_HH_
 
-#include <iosfwd>
 #include <string>
 
 namespace pnmc { namespace conf {
   
 /*------------------------------------------------------------------------------------------------*/
 
-enum class input_format {bpn, prod, tina, xml};
+enum class pn_encoding {places, units};
 
 struct pnmc_configuration
 {
   std::string file_name;
   bool read_stdin;
+
+  pn_encoding encoding;
 
   bool order_show;
   bool order_force_flat;

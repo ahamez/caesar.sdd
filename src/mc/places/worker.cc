@@ -10,9 +10,9 @@
 #include "mc/places/pre.hh"
 #include "mc/places/sdd.hh"
 #include "mc/places/concurrent_units.hh"
-#include "mc/places/places_encoding.hh"
+#include "mc/places/worker.hh"
 
-namespace pnmc { namespace mc {
+namespace pnmc { namespace mc { namespace places {
 
 namespace chrono = std::chrono;
 
@@ -216,12 +216,12 @@ state_space( const conf::pnmc_configuration& conf, const order& o, SDD m
 
 /*------------------------------------------------------------------------------------------------*/
 
-places_encoding::places_encoding(const conf::pnmc_configuration& c)
+worker::worker(const conf::pnmc_configuration& c)
   : conf(c)
 {}
 
 void
-places_encoding::operator()(const pn::net& net)
+worker::operator()(const pn::net& net)
 const
 {
   auto manager = sdd::manager<sdd_conf>::init();
@@ -269,4 +269,4 @@ const
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::mc
+}}} // namespace pnmc::mc::places

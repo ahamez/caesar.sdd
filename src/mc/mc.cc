@@ -1,5 +1,6 @@
 #include "mc/mc.hh"
-#include "mc/places/places_encoding.hh"
+#include "mc/places/worker.hh"
+#include "mc/units/worker.hh"
 
 namespace pnmc { namespace mc {
 
@@ -14,16 +15,11 @@ mc::mc(const conf::pnmc_configuration& conf)
 std::unique_ptr<mc_impl>
 mc::mk_impl(const conf::pnmc_configuration& conf)
 {
-//  class unit_encoding;
-
-//  if (conf.places_encoding)
-//  {
-  return std::unique_ptr<mc_impl>(new places_encoding(conf));
-//  }
-//  else if (conf.unit_encoding)
-//  {
-//
-//  }
+  switch (conf.encoding)
+  {
+    case conf::pn_encoding::places : return std::unique_ptr<mc_impl>(new places::worker(conf));
+    case conf::pn_encoding::units : return std::unique_ptr<mc_impl>(new units::worker(conf));
+  }
 }
 
 /*------------------------------------------------------------------------------------------------*/

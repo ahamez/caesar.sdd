@@ -22,6 +22,35 @@ const std::string version
 
 /*------------------------------------------------------------------------------------------------*/
 
+pn_encoding
+encoding(const po::variables_map& vm)
+{
+  const bool places = vm.count("places");
+  const bool units = vm.count("units");
+
+  if (not (places or units))
+  {
+    return pn_encoding::places;
+  }
+  else if (not (places xor units))
+  {
+    throw po::error("Can specify only one encoding type.");
+  }
+  else
+  {
+    if (places)
+    {
+      return pn_encoding::places;
+    }
+    else // units
+    {
+      return pn_encoding::units;
+    }
+  }
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
 boost::optional<pnmc_configuration>
 fill_configuration(int argc, char** argv)
 {
@@ -30,39 +59,37 @@ fill_configuration(int argc, char** argv)
   po::options_description general_options("General options");
   general_options.add_options()
     ( "help"                  , "Show this help")
-    ( "version"               , "Show version")
-  ;
+    ( "version"               , "Show version");
 
   po::options_description order_options("Order options");
   order_options.add_options()
     ("show-order"             , "Show the order")
     ("flat"                   , "Don't use hierarchy informations")
     ("order-min-height"       , po::value<unsigned int>()->default_value(1)
-                              , "Minimal number of variables at every level of the SDD")
-  ;
+                              , "Minimal number of variables at every level of the SDD");
+
+  po::options_description pn_options("Petri net options");
+  pn_options.add_options()
+    ("places"                 , "Use one variable per place")
+    ("units"                  , "Use one variable per unit");
 
   po::options_description hom_options("Homomorphisms options");
   hom_options.add_options()
-    ("show-relation"          , "Show the transition relation")
-  ;
+    ("show-relation"          , "Show the transition relation");
 
   po::options_description stats_options("Statistics options");
   stats_options.add_options()
     ("show-hash-stats"          , "Show the hash tables statistics")
-    ("show-time"                , "Show miscellaneous execution times")
-  ;
+    ("show-time"                , "Show miscellaneous execution times");
 
   po::options_description cadp_options("CADP options");
   cadp_options.add_options()
     ("dead"         , "Compute dead transitions")
-    ("unit"         , "Compute concurrent units")
-  ;
-
+    ("unit"         , "Compute concurrent units");
 
   po::options_description hidden_options("Hidden options");
   hidden_options.add_options()
-    ("input-file", po::value<std::string>(), "The Petri net file to analyse")
-  ;
+    ("input-file", po::value<std::string>(), "The Petri net file to analyse");
 
   po::positional_options_description p;
   p.add("input-file", 1);
@@ -72,6 +99,7 @@ fill_configuration(int argc, char** argv)
   	.add(general_options)
     .add(order_options)
     .add(hom_options)
+    .add(pn_options)
     .add(cadp_options)
     .add(stats_options)
   	.add(hidden_options);
@@ -97,6 +125,7 @@ fill_configuration(int argc, char** argv)
     std::cout << general_options << std::endl;
     std::cout << order_options << std::endl;
     std::cout << hom_options << std::endl;
+    std::cout << pn_options << std::endl;
     std::cout << cadp_options << std::endl;
     std::cout << stats_options << std::endl;
     return boost::optional<pnmc_configuration>();
@@ -114,6 +143,7 @@ fill_configuration(int argc, char** argv)
     conf.file_name = vm["input-file"].as<std::string>();
   }
   conf.order_show = vm.count("show-order");
+  conf.encoding = encoding(vm);
   conf.order_force_flat = vm.count("flat");
   conf.order_min_height = vm["order-min-height"].as<unsigned int>();
   conf.show_relation = vm.count("show-relation");

@@ -2,7 +2,7 @@
 
 #include "mc/places/post.hh"
 
-namespace pnmc { namespace mc {
+namespace pnmc { namespace mc { namespace places {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -23,7 +23,7 @@ operator<<(std::ostream& os, const post& p)
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::mc
+}}} // namespace pnmc::mc::places
 
 namespace std
 {
@@ -31,7 +31,7 @@ namespace std
 /*------------------------------------------------------------------------------------------------*/
 
 std::size_t
-hash<pnmc::mc::post>::operator()(const pnmc::mc::post& p)
+hash<pnmc::mc::places::post>::operator()(const pnmc::mc::places::post& p)
 const noexcept
 {
   return std::hash<unsigned int>()(2564450027);

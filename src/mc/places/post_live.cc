@@ -4,7 +4,7 @@
 
 #include "mc/places/post_live.hh"
 
-namespace pnmc { namespace mc {
+namespace pnmc { namespace mc { namespace places {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -41,7 +41,7 @@ operator<<(std::ostream& os, const post_live& l)
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::mc
+}}} // namespace pnmc::mc::places
 
 namespace std
 {
@@ -49,7 +49,7 @@ namespace std
 /*------------------------------------------------------------------------------------------------*/
 
 std::size_t
-hash<pnmc::mc::post_live>::operator()(const pnmc::mc::post_live& l)
+hash<pnmc::mc::places::post_live>::operator()(const pnmc::mc::places::post_live& l)
 const noexcept
 {
   std::size_t seed = 49979687;

@@ -1,20 +1,26 @@
-#ifndef _PNMC_MC_UNIT_HH_
-#define _PNMC_MC_UNIT_HH_
+#ifndef _PNMC_MC_WORKER_HH_
+#define _PNMC_MC_WORKER_HH_
 
 #include "conf/configuration.hh"
-#include "mc/places/sdd.hh"
-#include "pn/net.hh"
+#include "mc/mc_impl.hh"
 
 namespace pnmc { namespace mc { namespace places {
 
 /*------------------------------------------------------------------------------------------------*/
 
-void
-compute_concurrent_units( const conf::pnmc_configuration&, const pn::net&
-                        , const sdd::order<sdd_conf>&, SDD);
+struct worker
+  : public mc_impl
+{
+  const conf::pnmc_configuration& conf;
+
+  worker(const conf::pnmc_configuration& c);
+
+  void
+  operator()(const pn::net& net) const;
+};
 
 /*------------------------------------------------------------------------------------------------*/
 
 }}} // namespace pnmc::mc::places
 
-#endif // _PNMC_MC_UNIT_HH_
+#endif // _PNMC_MC_WORKER_HH_

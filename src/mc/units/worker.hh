@@ -1,19 +1,19 @@
-#ifndef _PNMC_MC_PLACES_ENCODING_HH_
-#define _PNMC_MC_PLACES_ENCODING_HH_
+#ifndef _PNMC_MC_UNITS_WORKER_HH_
+#define _PNMC_MC_UNITS_WORKER_HH_
 
 #include "conf/configuration.hh"
 #include "mc/mc_impl.hh"
 
-namespace pnmc { namespace mc {
+namespace pnmc { namespace mc { namespace units {
 
 /*------------------------------------------------------------------------------------------------*/
 
-struct places_encoding
+struct worker
   : public mc_impl
 {
   const conf::pnmc_configuration& conf;
 
-  places_encoding(const conf::pnmc_configuration& c);
+  worker(const conf::pnmc_configuration& c);
 
   void
   operator()(const pn::net& net) const;
@@ -21,6 +21,6 @@ struct places_encoding
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::mc
+}}} // namespace pnmc::mc::units
 
-#endif // _PNMC_MC_PLACES_ENCODING_HH_
+#endif // _PNMC_MC_UNITS_WORKER_HH_

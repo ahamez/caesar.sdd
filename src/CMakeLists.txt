@@ -1,11 +1,12 @@
 set(SOURCES
     main.cc
     conf/fill_configuration.cc
-    mc/places/places_encoding.cc
+    mc/places/concurrent_units.cc
     mc/places/post.cc
     mc/places/post_live.cc
     mc/places/pre.cc
-    mc/places/concurrent_units.cc
+    mc/places/worker.cc
+    mc/units/worker.cc
     mc/mc.cc
     mc/mc_impl.cc
     parsers/bpn.cc

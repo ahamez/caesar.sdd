@@ -2,7 +2,7 @@
 
 #include "mc/places/pre.hh"
 
-namespace pnmc { namespace mc {
+namespace pnmc { namespace mc { namespace places {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -23,14 +23,14 @@ operator<<(std::ostream& os, const pre& p)
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::mc
+}}} // namespace pnmc::mc::places
 
 namespace std {
 
 /*------------------------------------------------------------------------------------------------*/
 
 std::size_t
-hash<pnmc::mc::pre>::operator()(const pnmc::mc::pre& p)
+hash<pnmc::mc::places::pre>::operator()(const pnmc::mc::places::pre& p)
 const noexcept
 {
   return std::hash<unsigned int>()(3464152273);
