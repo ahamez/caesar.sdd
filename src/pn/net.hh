@@ -91,14 +91,11 @@ public:
 
   /// @brief BPN units.
   std::deque<std::deque<std::reference_wrapper<const place>>> units;
-//  std::size_t nb_units;
 
   /// @brief Default constructor.
   net();
 
   /// @brief Add a place.
-  ///
-  /// If the place already exist, its marking is updated.
   const place&
   add_place(const std::string& id, unsigned int marking, unsigned int unit);
 
