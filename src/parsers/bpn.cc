@@ -298,7 +298,6 @@ bpn(std::istream& in)
     unsigned int nb_nested_units, first, last;
     std::string module_name;
     in >> prefix('U', module_name) >> sharp() >> interval(first, last) >> sharp(nb_nested_units);
-//    ++net.nb_units;
 
     const unsigned int module_nb = std::stoi(module_name);
 
@@ -364,7 +363,8 @@ bpn(std::istream& in)
     --nb_transitions;
   }
 
-  net.add_place(std::to_string(initial_place), 1, root_module_nb);
+  // Set marking of initial place.
+  net.update_place(std::to_string(initial_place), 1);
 
   for (auto& kv : modules)
   {

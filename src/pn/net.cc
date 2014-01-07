@@ -47,11 +47,11 @@ struct add_pre_place_to_transition
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Used by Boost.MultiIndex.
-struct update_place
+struct update_place_helper
 {
   const unsigned int marking;
 
-  update_place(unsigned int m)
+  update_place_helper(unsigned int m)
   	: marking(m)
   {}
 
@@ -75,14 +75,18 @@ const place&
 net::add_place(const std::string& pid, unsigned int marking, unsigned int unit)
 {
   const auto cit = places_by_id().find(pid);
-  if (cit == places_by_id().cend())
-  {
-    return *places_set.get<insertion_index>().emplace_back(pid, marking, unit).first;
-  }
-  // This place was created before by add_post_place() or add_pre_place().
-  // At this time, the marking was not known. We can now update it.
-  places_set.get<id_index>().modify(cit, update_place(marking));
-  return *cit;
+  assert(cit == places_by_id().cend());
+  return *places_set.get<insertion_index>().emplace_back(pid, marking, unit).first;
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+void
+net::update_place(const std::string pid, unsigned int marking)
+{
+  const auto cit = places_by_id().find(pid);
+  assert(cit != places_by_id().cend());
+  places_set.get<id_index>().modify(cit, update_place_helper(marking));
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -107,13 +111,9 @@ net::add_transition(const std::string& tid)
 void
 net::add_post_place(const std::string& tid, const std::string& post, unsigned int valuation)
 {
+  assert(places_by_id().find(post) != places_by_id().end());
   const auto it = transitions_set.get<id_index>().find(tid);
   transitions_set.modify(it, add_post_place_to_transition(valuation, post));
-  if (places_by_id().find(post) == places_by_id().end())
-  {
-//    add_place(post, 0);
-    assert(false);
-  }
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -121,13 +121,9 @@ net::add_post_place(const std::string& tid, const std::string& post, unsigned in
 void
 net::add_pre_place(const std::string& tid, const std::string& pre, unsigned int valuation)
 {
+  assert(places_by_id().find(pre) != places_by_id().end());
   const auto it = transitions_set.get<id_index>().find(tid);
   transitions_set.modify(it, add_pre_place_to_transition(valuation, pre));
-  if (places_by_id().find(pre) == places_by_id().end())
-  {
-//    add_place(pre, 0);
-    assert(false);
-  }
 }
 
 /*------------------------------------------------------------------------------------------------*/

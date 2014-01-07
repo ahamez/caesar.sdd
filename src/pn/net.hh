@@ -109,16 +109,16 @@ public:
   add_transition(const std::string& tid);
 
   /// @brief Add a post place to a transition.
-  ///
-  /// If the place doesn't exist, it is created with a marking set to 0.
   void
   add_post_place(const std::string& tid, const std::string& post, unsigned int marking);
 
   /// @brief Add a pre place to a transition.
-  ///
-  /// If the place doesn't exist, it is created with a marking set to 0.
   void
   add_pre_place(const std::string& tid, const std::string& pre, unsigned int marking);
+
+  /// @brief Update a place.
+  void
+  update_place(const std::string pid, unsigned int marking);
 
   /// @brief Return all places by insertion order.
   const places_type::index<insertion_index>::type&
