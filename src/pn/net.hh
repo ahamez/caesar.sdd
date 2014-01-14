@@ -121,11 +121,11 @@ public:
 
   /// @brief Return all places of a unit.
   std::vector<std::reference_wrapper<const place>>
-  places_of_unit(unsigned int unit) const noexcept;
+  places_of_unit(unsigned int unit) const;
 
   /// @brief Return the unit of a place.
   unsigned int
-  unit_of_place(unsigned int place) const noexcept;
+  unit_of_place(unsigned int place) const;
 
   /// @brief Return the number of units.
   std::size_t

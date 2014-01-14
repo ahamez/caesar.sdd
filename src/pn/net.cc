@@ -75,7 +75,7 @@ const place&
 net::add_place(unsigned int pid, unsigned int marking, unsigned int unit)
 {
   assert(places_by_id().find(pid) == places_by_id().cend());
-  return *places_.get<insertion_index>().emplace_back(pid, marking, unit).first;
+  return *places_.get<insertion_index>().push_back({pid, marking, unit}).first;
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -146,7 +146,7 @@ const noexcept
 
 std::vector<std::reference_wrapper<const place>>
 net::places_of_unit(unsigned int i)
-const noexcept
+const
 {
   const auto p = places_.get<unit_index>().equal_range(i);
   return std::vector<std::reference_wrapper<const place>>(p.first, p.second);
@@ -156,7 +156,7 @@ const noexcept
 
 unsigned int
 net::unit_of_place(unsigned int place)
-const noexcept
+const
 {
   return places_.get<id_index>().find(place)->unit;
 }
@@ -167,7 +167,8 @@ std::size_t
 net::units_size()
 const noexcept
 {
-  return std::prev(places_.get<unit_index>().end())->unit + 1;
+  const auto& places = places_.get<unit_index>();
+  return places.empty() ? 0 : std::prev(places_.get<unit_index>().end())->unit + 1;
 }
 
 /*------------------------------------------------------------------------------------------------*/
