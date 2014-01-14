@@ -4,7 +4,7 @@ cmake_minimum_required (VERSION 2.8.10)
 
 ################################################################################
 
-project (pnmc)
+project (caesar.sdd)
 
 option (PACKED "Pack structures" OFF)
 option (PROFILE "Profile the library" OFF)
