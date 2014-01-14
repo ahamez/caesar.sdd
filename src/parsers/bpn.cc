@@ -275,11 +275,6 @@ bpn(std::istream& in)
   // temporary string placeholders
   std::string s0, s1;
 
-  // map a unit id to its corresponding module and its nested modules
-  using module_places = std::pair< pn::module                  // corresponding module
-                                 , std::vector<unsigned int>>; // nested modules' id
-  std::unordered_map<unsigned int, module_places> modules;
-
   in >> kw("places") >> sharp() >> interval();
   in >> kw("initial") >> kw("place") >> uint(net.initial_place);
 
@@ -294,24 +289,16 @@ bpn(std::istream& in)
     unsigned int unit_nb, nb_nested_units, first, last;
     in >> prefix('U', unit_nb) >> sharp() >> interval(first, last) >> sharp(nb_nested_units);
 
-    pn::module_node m(unit_nb);
     for (unsigned int i = first; i <= last; ++i)
     {
-      const auto& p = net.add_place(i, 0, unit_nb);
-      m.add_module(pn::make_module(p));
+      net.add_place(i, 0, unit_nb);
     }
 
-    const auto insertion = modules.emplace( unit_nb
-                                          , std::make_pair( pn::make_module(m)
-                                                          , std::vector<unsigned int>()));
-
-    // nested modules
+    // nested units
     for (unsigned int i = 0; i < nb_nested_units; ++i)
     {
       unsigned int sub_unit;
       in >> uint(sub_unit);
-      // keep the name of the nested unit
-      insertion.first->second.second.push_back(sub_unit);
     }
 
     --nb_units;
@@ -351,16 +338,6 @@ bpn(std::istream& in)
 
   // Set marking of initial place.
   net.update_place(net.initial_place, 1);
-
-  for (auto& kv : modules)
-  {
-    for (const auto& unit_id : kv.second.second)
-    {
-      const auto nested_module = modules[unit_id].first;
-      boost::get<pn::module_node>(*kv.second.first).add_module(nested_module);
-    }
-  }
-  net.modules = modules[net.root_unit].first;
 
   return net_ptr;
 }

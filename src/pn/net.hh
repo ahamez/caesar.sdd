@@ -2,7 +2,7 @@
 #define _PNMC_PN_NET_HH_
 
 #include <functional> // reference_wrapper
-//#include <deque>
+#include <vector>
 
 #pragma GCC diagnostic push
 #if defined(__GNUC__) && !defined(__clang__)
@@ -15,7 +15,6 @@
 #include <boost/multi_index/sequenced_index.hpp>
 #pragma GCC diagnostic pop
 
-#include "pn/module.hh"
 #include "pn/place.hh"
 #include "pn/transition.hh"
 
@@ -80,9 +79,6 @@ private:
   transitions_type transitions_;
 
 public:
-
-  /// @brief The hierarchical description, if any, of this Petri net.
-  module modules;
 
   /// @brief The unit that contains all other units.
   unsigned int root_unit;

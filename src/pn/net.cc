@@ -66,7 +66,7 @@ struct update_place_helper
 /*------------------------------------------------------------------------------------------------*/
 
 net::net()
-  : places_(), transitions_(), modules(nullptr), root_unit(), initial_place()
+  : places_(), transitions_(), root_unit(), initial_place()
 {}
 
 /*------------------------------------------------------------------------------------------------*/
