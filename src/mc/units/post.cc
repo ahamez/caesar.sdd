@@ -30,7 +30,7 @@ operator<<(std::ostream& os, const post& p)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Equality of two post.
-constexpr bool
+bool
 operator==(const post& lhs, const post& rhs) noexcept
 {
   return lhs.place == rhs.place;

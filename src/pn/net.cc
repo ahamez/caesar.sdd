@@ -74,8 +74,7 @@ net::net()
 const place&
 net::add_place(unsigned int pid, unsigned int marking, unsigned int unit)
 {
-  const auto cit = places_by_id().find(pid);
-  assert(cit == places_by_id().cend());
+  assert(places_by_id().find(pid) == places_by_id().cend());
   return *places_.get<insertion_index>().emplace_back(pid, marking, unit).first;
 }
 
@@ -151,6 +150,15 @@ const noexcept
 {
   const auto p = places_.get<unit_index>().equal_range(i);
   return std::vector<std::reference_wrapper<const place>>(p.first, p.second);
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+unsigned int
+net::unit_of_place(unsigned int place)
+const noexcept
+{
+  return places_.get<id_index>().find(place)->unit;
 }
 
 /*------------------------------------------------------------------------------------------------*/

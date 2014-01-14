@@ -13,16 +13,19 @@ namespace pnmc { namespace mc { namespace units {
 
 struct post
 {
-  unsigned int place;
+  /// @brief Target place.
+  const unsigned int place;
 
-  post(unsigned int);
+  /// @brief Constructor.
+  post(unsigned int place);
 
+  /// @brief Apply this operation.
   sdd::values::flat_set<unsigned int>
   operator()(const sdd::values::flat_set<unsigned int>&) const noexcept;
 };
 
 /// @brief Equality of two post.
-constexpr bool
+bool
 operator==(const post& lhs, const post& rhs) noexcept;
 
 /// @brief Textual output of a post.

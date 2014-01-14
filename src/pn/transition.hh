@@ -14,10 +14,10 @@ struct transition
   /// @brief This transition's id.
   const unsigned int id;
 
-  /// @brief Pre-places
+  /// @brief Pre-places: place_id x valuation
   std::multimap<unsigned int, unsigned int> pre;
 
-  /// @brief Post-places
+  /// @brief Post-places: place_id x valuation
   std::multimap<unsigned int, unsigned int> post;
 
   /// @brief Constructor.

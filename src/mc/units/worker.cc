@@ -45,73 +45,92 @@ initial_state(const order& o, const pn::net& net)
 
 /*------------------------------------------------------------------------------------------------*/
 
-//homomorphism
-//transition_relation( const conf::pnmc_configuration& conf, const order& o
-//                   , const pn::net& net, boost::dynamic_bitset<>& transitions_bitset)
-//{
-//  chrono::time_point<chrono::system_clock> start;
-//  chrono::time_point<chrono::system_clock> end;
-//  std::size_t elapsed;
-//
-//  start = chrono::system_clock::now();
-//  std::set<homomorphism> operands;
-//  operands.insert(Id<sdd_conf>());
-//
-//  for (const auto& transition : net.transitions())
-//  {
-//    homomorphism h_t = Id<sdd_conf>();
-//
-//    if (not transition.post.empty())
-//    {
-//      // post actions.
-//      auto arc_cit = transition.post.begin();
-////      if (conf.compute_dead_transitions)
-////      {
-////        const auto f = ValuesFunction<sdd_conf>( o, arc_cit->first
-////                                               , post_live(transition.index, transitions_bitset));
-////        h_t = Composition(h_t, sdd::carrier(o, arc_cit->first, f));
-////      }
-////      else
+homomorphism
+transition_relation( const conf::pnmc_configuration& conf, const order& o
+                   , const pn::net& net, boost::dynamic_bitset<>& transitions_bitset)
+{
+  chrono::time_point<chrono::system_clock> start;
+  chrono::time_point<chrono::system_clock> end;
+  std::size_t elapsed;
+
+  start = chrono::system_clock::now();
+  std::set<homomorphism> operands;
+  operands.insert(Id<sdd_conf>());
+
+  for (const auto& transition : net.transitions())
+  {
+    homomorphism h_t = Id<sdd_conf>();
+
+    if (not transition.post.empty())
+    {
+      // post actions.
+      auto arc_cit = transition.post.begin();
+//      if (conf.compute_dead_transitions)
 //      {
-//        homomorphism f = ValuesFunction<sdd_conf>(o, arc_cit->first, post());
+//        const auto f = ValuesFunction<sdd_conf>( o, arc_cit->first
+//                                               , post_live(transition.index, transitions_bitset));
 //        h_t = Composition(h_t, sdd::carrier(o, arc_cit->first, f));
 //      }
-//      for (++arc_cit; arc_cit != transition.post.end(); ++arc_cit)
-//      {
-//        homomorphism f = ValuesFunction<sdd_conf>(o, arc_cit->first, post());
-//        h_t = Composition(h_t, sdd::carrier(o, arc_cit->first, f));
-//      }
-//    }
-//
-//    // pre actions.
-//    for (const auto& arc : transition.pre)
-//    {
-//      homomorphism f = ValuesFunction<sdd_conf>(o, arc.first, pre());
-//      h_t = Composition(h_t, sdd::carrier(o, arc.first, f));
-//    }
-//
-//    operands.insert(h_t);
-//  }
-//  end = chrono::system_clock::now();
-//  elapsed = chrono::duration_cast<chrono::seconds>(end-start).count();
-//
-//  if (conf.show_time)
-//  {
-//    std::cout << "Transition relation time: " << elapsed << "s" << std::endl;
-//  }
-//
-//  start = chrono::system_clock::now();
-//  const auto res = sdd::rewrite(Fixpoint(Sum<sdd_conf>(o, operands.cbegin(), operands.cend())), o);
-//  end = chrono::system_clock::now();
-//  elapsed = chrono::duration_cast<chrono::seconds>(end-start).count();
-//
-//  if (conf.show_time)
-//  {
-//    std::cout << "Rewrite time: " << elapsed << "s" << std::endl;
-//  }
-//
-//  return res;
-//}
+//      else
+      {
+        homomorphism f
+          = ValuesFunction<sdd_conf>(o, net.unit_of_place(arc_cit->first), post(arc_cit->first));
+        h_t = Composition(h_t, sdd::carrier(o, net.unit_of_place(arc_cit->first), f));
+      }
+      for (++arc_cit; arc_cit != transition.post.end(); ++arc_cit)
+      {
+        homomorphism f
+          = ValuesFunction<sdd_conf>(o, net.unit_of_place(arc_cit->first), post(arc_cit->first));
+        h_t = Composition(h_t, sdd::carrier(o, net.unit_of_place(arc_cit->first), f));
+      }
+    }
+
+    // pre actions.
+    for (const auto& arc : transition.pre)
+    {
+      homomorphism f = ValuesFunction<sdd_conf>(o, net.unit_of_place(arc.first), pre(arc.first));
+      h_t = Composition(h_t, sdd::carrier(o, net.unit_of_place(arc.first), f));
+    }
+
+    operands.insert(h_t);
+  }
+  end = chrono::system_clock::now();
+  elapsed = chrono::duration_cast<chrono::seconds>(end-start).count();
+
+  if (conf.show_time)
+  {
+    std::cout << "Transition relation time: " << elapsed << "s" << std::endl;
+  }
+
+  start = chrono::system_clock::now();
+  const auto res = sdd::rewrite(Fixpoint(Sum<sdd_conf>(o, operands.cbegin(), operands.cend())), o);
+  end = chrono::system_clock::now();
+  elapsed = chrono::duration_cast<chrono::seconds>(end-start).count();
+
+  if (conf.show_time)
+  {
+    std::cout << "Rewrite time: " << elapsed << "s" << std::endl;
+  }
+
+  return res;
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+SDD
+state_space( const conf::pnmc_configuration& conf, const order& o, SDD m
+           , homomorphism h)
+{
+  chrono::time_point<chrono::system_clock> start = chrono::system_clock::now();
+  const auto res = h(o, m);
+  chrono::time_point<chrono::system_clock> end = chrono::system_clock::now();
+  const std::size_t elapsed = chrono::duration_cast<chrono::seconds>(end-start).count();
+  if (conf.show_time)
+  {
+    std::cout << "State space computation time: " << elapsed << "s" << std::endl;
+  }
+  return res;
+}
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -126,20 +145,7 @@ worker::operator()(const pn::net& net)
 const
 {
   auto manager = sdd::manager<sdd_conf>::init();
-
-  std::cout << "------------------------------------\n";
-  for (const auto& p : net.places_of_unit(1))
-  {
-    std::cout << p << "\n";
-  }
-//  net.places_of_unit(1);
-//  std::cout << "nb units " << net.units_size() << "\n";
-//  const auto& places_by_unit = net.places_set.get<pn::net::unit_index>();
-//  for (const auto& p : places_by_unit)
-//  {
-//    std::cout << p << "\n";
-//  }
-  std::cout << "------------------------------------\n";
+  boost::dynamic_bitset<> transitions_bitset(net.transitions().size());
 
   const auto o = mk_order(net);
   assert(not o.empty() && "Empty order");
@@ -149,7 +155,22 @@ const
   }
 
   const SDD m0 = initial_state(o, net);
-  std::cout << m0 << "\n";
+
+  const homomorphism h = transition_relation(conf, o, net, transitions_bitset);
+  if (conf.show_relation)
+  {
+    std::cout << h << std::endl;
+  }
+
+  const SDD m = state_space(conf, o, m0, h);
+
+  const auto n = sdd::count_combinations(m);
+  std::cerr << n.template convert_to<long double>() << " states" << std::endl;
+
+  if (conf.show_hash_tables_stats)
+  {
+    std::cout << manager << std::endl;
+  }
 }
 
 /*------------------------------------------------------------------------------------------------*/

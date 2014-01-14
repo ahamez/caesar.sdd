@@ -22,7 +22,7 @@ struct pre
 };
 
 /// @brief Equality of two pre.
-constexpr bool
+bool
 operator==(const pre&, const pre&) noexcept;
 
 /// @brief Textual output of a pre.

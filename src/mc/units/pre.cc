@@ -37,7 +37,7 @@ operator<<(std::ostream& os, const pre& p)
 
 /*------------------------------------------------------------------------------------------------*/
 
-constexpr bool
+bool
 operator==(const pre& lhs, const pre& rhs)
 noexcept
 {
