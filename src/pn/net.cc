@@ -66,7 +66,7 @@ struct update_place_helper
 /*------------------------------------------------------------------------------------------------*/
 
 net::net()
-  : name(), places_set(), transitions_set(), modules(nullptr), units(), root_unit(), initial_place()
+  : name(), places_set(), transitions_set(), modules(nullptr), root_unit(), initial_place()
 {}
 
 /*------------------------------------------------------------------------------------------------*/
@@ -141,6 +141,25 @@ net::places_by_id()
 const noexcept
 {
   return places_set.get<id_index>();
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+std::vector<std::reference_wrapper<const place>>
+net::places_of_unit(unsigned int i)
+const noexcept
+{
+  const auto p = places_set.get<unit_index>().equal_range(i);
+  return std::vector<std::reference_wrapper<const place>>(p.first, p.second);
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+std::size_t
+net::units_size()
+const noexcept
+{
+  return std::prev(places_set.get<unit_index>().end())->unit + 1;
 }
 
 /*------------------------------------------------------------------------------------------------*/

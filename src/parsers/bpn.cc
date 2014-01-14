@@ -285,7 +285,6 @@ bpn(std::istream& in)
 
   unsigned int nb_units;
   in >> kw("units") >> sharp(nb_units) >> interval();
-  net.units.resize(nb_units);
 
   // units
   in >> kw("root") >> kw("unit") >> uint(net.root_unit);
@@ -293,7 +292,6 @@ bpn(std::istream& in)
   while (nb_units > 0)
   {
     unsigned int unit_nb, nb_nested_units, first, last;
-    std::string module_name;
     in >> prefix('U', unit_nb) >> sharp() >> interval(first, last) >> sharp(nb_nested_units);
 
     pn::module_node m(unit_nb);

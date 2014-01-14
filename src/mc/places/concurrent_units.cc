@@ -12,12 +12,12 @@ namespace pnmc { namespace mc { namespace places {
 namespace {
 
 SDD
-query(const pn::net& net, const sdd::order<sdd_conf>& order, std::size_t i, std::size_t j)
+query(const pn::net& net, const sdd::order<sdd_conf>& order, unsigned int i, unsigned int j)
 {
   SDD q = sdd::zero<sdd_conf>();
-  for (const auto& pi : net.units[i])
+  for (const auto& pi : net.places_of_unit(i))
   {
-    for (const auto& pj : net.units[j])
+    for (const auto& pj : net.places_of_unit(j))
     {
       q += SDD(order, [&](unsigned int id)
                           {
@@ -41,11 +41,11 @@ compute_concurrent_units( const conf::pnmc_configuration& conf, const pn::net& n
   namespace chrono = std::chrono;
   chrono::time_point<chrono::system_clock> start = chrono::system_clock::now();
 
-  const std::size_t nb_units = net.units.size();
-  std::size_t j_end = 1;
-  for (std::size_t i = 0; i < nb_units; ++i, ++j_end)
+  const auto nb_units = net.units_size();
+  unsigned int j_end = 1;
+  for (unsigned int i = 0; i < nb_units; ++i, ++j_end)
   {
-    for (std::size_t j = 0; j < j_end; ++j)
+    for (unsigned int j = 0; j < j_end; ++j)
     {
       if (i == j)
       {

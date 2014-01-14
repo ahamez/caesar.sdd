@@ -22,7 +22,7 @@ order
 mk_order(const pn::net& net)
 {
   order_builder ob;
-  for (unsigned int i = 0; i < net.units.size(); ++i)
+  for (unsigned int i = 0; i < net.units_size(); ++i)
   {
     ob.push(i);
   }
@@ -126,6 +126,20 @@ worker::operator()(const pn::net& net)
 const
 {
   auto manager = sdd::manager<sdd_conf>::init();
+
+  std::cout << "------------------------------------\n";
+  for (const auto& p : net.places_of_unit(1))
+  {
+    std::cout << p << "\n";
+  }
+//  net.places_of_unit(1);
+//  std::cout << "nb units " << net.units_size() << "\n";
+//  const auto& places_by_unit = net.places_set.get<pn::net::unit_index>();
+//  for (const auto& p : places_by_unit)
+//  {
+//    std::cout << p << "\n";
+//  }
+  std::cout << "------------------------------------\n";
 
   const auto o = mk_order(net);
   assert(not o.empty() && "Empty order");

@@ -1,7 +1,8 @@
 #ifndef _PNMC_PN_NET_HH_
 #define _PNMC_PN_NET_HH_
 
-#include <deque>
+#include <functional> // reference_wrapper
+//#include <deque>
 
 #pragma GCC diagnostic push
 #if defined(__GNUC__) && !defined(__clang__)
@@ -26,7 +27,7 @@ using namespace boost::multi_index;
 
 /*------------------------------------------------------------------------------------------------*/
 
-struct net
+class net
 {
 private:
 
@@ -86,11 +87,10 @@ public:
   /// @brief The hierarchical description, if any, of this Petri net.
   module modules;
 
-  /// @brief BPN units.
-  std::vector<std::deque<std::reference_wrapper<const place>>> units;
-
+  /// @brief The unit that contains all other units.
   unsigned int root_unit;
 
+  /// @brief The initially marked place.
   unsigned int initial_place;
 
   /// @brief Default constructor.
@@ -125,6 +125,14 @@ public:
   /// @brief Return all places by identifier.
   const places_type::index<id_index>::type&
   places_by_id() const noexcept;
+
+  /// @brief Return all places of a unit.
+  std::vector<std::reference_wrapper<const place>>
+  places_of_unit(unsigned int) const noexcept;
+
+  /// @brief Return the number of units.
+  std::size_t
+  units_size() const noexcept;
 
   /// @brief Return all transitions.
   const transitions_type::index<id_index>::type&
