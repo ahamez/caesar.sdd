@@ -43,8 +43,6 @@ private:
   /// @brief
   struct unit_index{};
 
-public:
-
   /// @brief The type of the set of all places.
   typedef multi_index_container<
                 place
@@ -75,14 +73,13 @@ public:
               >
          > transitions_type;
 
-  /// @brief The net's name.
-  std::string name;
-
   /// @brief The set of places.
-  places_type places_set;
+  places_type places_;
 
   /// @brief The set of transitions.
-  transitions_type transitions_set;
+  transitions_type transitions_;
+
+public:
 
   /// @brief The hierarchical description, if any, of this Petri net.
   module modules;
