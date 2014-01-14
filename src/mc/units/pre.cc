@@ -32,7 +32,7 @@ const noexcept
 std::ostream&
 operator<<(std::ostream& os, const pre& p)
 {
-  return os << "pre";
+  return os << "pre(" << p.place << ")";
 }
 
 /*------------------------------------------------------------------------------------------------*/
