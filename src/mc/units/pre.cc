@@ -19,7 +19,7 @@ const noexcept
 {
   if (val.find(place + 1) != val.end())
   {
-    return {place + 1};
+    return {0};
   }
   else
   {
