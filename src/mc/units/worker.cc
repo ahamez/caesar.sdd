@@ -8,6 +8,7 @@
 #include <boost/dynamic_bitset.hpp>
 
 #include "mc/units/post.hh"
+#include "mc/units/post_live.hh"
 #include "mc/units/pre.hh"
 #include "mc/units/sdd.hh"
 #include "mc/units/worker.hh"
@@ -65,13 +66,14 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
     {
       // post actions.
       auto arc_cit = transition.post.begin();
-//      if (conf.compute_dead_transitions)
-//      {
-//        const auto f = ValuesFunction<sdd_conf>( o, arc_cit->first
-//                                               , post_live(transition.index, transitions_bitset));
-//        h_t = Composition(h_t, sdd::carrier(o, arc_cit->first, f));
-//      }
-//      else
+      if (conf.compute_dead_transitions)
+      {
+        const auto f
+          = ValuesFunction<sdd_conf>( o, net.unit_of_place(arc_cit->first)
+                                    , post_live(arc_cit->first, transition.id, transitions_bitset));
+        h_t = Composition(h_t, sdd::carrier(o, net.unit_of_place(arc_cit->first), f));
+      }
+      else
       {
         homomorphism f
           = ValuesFunction<sdd_conf>(o, net.unit_of_place(arc_cit->first), post(arc_cit->first));
@@ -163,6 +165,14 @@ const
   }
 
   const SDD m = state_space(conf, o, m0, h);
+
+  if (conf.compute_dead_transitions)
+  {
+    for (std::size_t i = 0; i < net.transitions().size(); ++i)
+    {
+      std::cout << (!transitions_bitset[i]) << "\n";
+    }
+  }
 
   const auto n = sdd::count_combinations(m);
   std::cerr << n.template convert_to<long double>() << " states" << std::endl;
