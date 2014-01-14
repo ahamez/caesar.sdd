@@ -5,6 +5,8 @@
 #include <set>
 #include <utility> // pair
 
+#include <boost/dynamic_bitset.hpp>
+
 #include "mc/places/post.hh"
 #include "mc/places/post_live.hh"
 #include "mc/places/pre.hh"
@@ -18,93 +20,93 @@ namespace chrono = std::chrono;
 
 /*------------------------------------------------------------------------------------------------*/
 
-struct mk_order_visitor
-  : public boost::static_visitor<std::pair<std::string, sdd::order_builder<sdd_conf>>>
-{
-  using result_type = std::pair<order_identifier, sdd::order_builder<sdd_conf>>;
-
-  const conf::pnmc_configuration& conf;
-  mutable unsigned int artificial_id_counter;
-
-  mk_order_visitor(const conf::pnmc_configuration& c)
-    : conf(c), artificial_id_counter(0)
-  {}
-
-  // Place: base case of the recursion, there's no more possible nested hierarchies.
-  result_type
-  operator()(const pn::place* p)
-  const noexcept
-  {
-    return std::make_pair(order_identifier(p->id), order_builder());
-  }
-
-  // Hierarchy.
-  result_type
-  operator()(const pn::module_node& m)
-  const noexcept
-  {
-    assert(not m.nested.empty());
-
-    std::deque<result_type> tmp;
-
-    for (const auto& h : m.nested)
-    {
-      const auto res = boost::apply_visitor(*this, *h);
-      tmp.push_back(res);
-    }
-
-    std::size_t height = 0;
-    for (const auto& p : tmp)
-    {
-      if (not p.second.empty())
-      {
-        height += p.second.height();
-      }
-      else
-      {
-        height += 1; // place
-      }
-    }
-
-    order_builder ob;
-    if (height <= conf.order_min_height)
-    {
-      order_identifier id;
-      for (const auto& p : tmp)
-      {
-        if (not p.second.empty())
-        {
-          ob = p.second << ob;
-        }
-        else // place
-        {
-          ob.push(p.first, p.second);
-        }
-      }
-      return result_type(id, ob);
-    }
-    else
-    {
-      for (const auto& p : tmp)
-      {
-        ob.push(p.first, p.second);
-      }
-    }
-
-    return std::make_pair(order_identifier(m.id) , ob);
-  }
-};
+//struct mk_order_visitor
+//  : public boost::static_visitor<std::pair<std::string, sdd::order_builder<sdd_conf>>>
+//{
+//  using result_type = std::pair<order_identifier, sdd::order_builder<sdd_conf>>;
+//
+//  const conf::pnmc_configuration& conf;
+//  mutable unsigned int artificial_id_counter;
+//
+//  mk_order_visitor(const conf::pnmc_configuration& c)
+//    : conf(c), artificial_id_counter(0)
+//  {}
+//
+//  // Place: base case of the recursion, there's no more possible nested hierarchies.
+//  result_type
+//  operator()(const pn::place* p)
+//  const noexcept
+//  {
+//    return std::make_pair(order_identifier(p->id), order_builder());
+//  }
+//
+//  // Hierarchy.
+//  result_type
+//  operator()(const pn::module_node& m)
+//  const noexcept
+//  {
+//    assert(not m.nested.empty());
+//
+//    std::deque<result_type> tmp;
+//
+//    for (const auto& h : m.nested)
+//    {
+//      const auto res = boost::apply_visitor(*this, *h);
+//      tmp.push_back(res);
+//    }
+//
+//    std::size_t height = 0;
+//    for (const auto& p : tmp)
+//    {
+//      if (not p.second.empty())
+//      {
+//        height += p.second.height();
+//      }
+//      else
+//      {
+//        height += 1; // place
+//      }
+//    }
+//
+//    order_builder ob;
+//    if (height <= conf.order_min_height)
+//    {
+//      order_identifier id;
+//      for (const auto& p : tmp)
+//      {
+//        if (not p.second.empty())
+//        {
+//          ob = p.second << ob;
+//        }
+//        else // place
+//        {
+//          ob.push(p.first, p.second);
+//        }
+//      }
+//      return result_type(id, ob);
+//    }
+//    else
+//    {
+//      for (const auto& p : tmp)
+//      {
+//        ob.push(p.first, p.second);
+//      }
+//    }
+//
+//    return std::make_pair(order_identifier(m.id) , ob);
+//  }
+//};
 
 /*------------------------------------------------------------------------------------------------*/
 
 order
 mk_order(const conf::pnmc_configuration& conf, const pn::net& net)
 {
-  if (not conf.order_force_flat and net.modules)
-  {
-    return order(boost::apply_visitor(mk_order_visitor(conf), *net.modules).second);
-  }
-  else
+//  if (not conf.order_force_flat and net.modules)
+//  {
+//    return order(boost::apply_visitor(mk_order_visitor(conf), *net.modules).second);
+//  }
+//  else
   {
     order_builder ob;
     for (const auto& place : net.places())
@@ -120,11 +122,11 @@ mk_order(const conf::pnmc_configuration& conf, const pn::net& net)
 SDD
 initial_state(const order& o, const pn::net& net)
 {
-  return SDD(o, [&](const std::string& id)
-                        -> sdd::values::bitset<64>
-                       {
-                         return {net.places_by_id().find(id)->marking};
-                       });
+  return SDD(o, [&](unsigned int id)
+                    -> sdd::values::bitset<64>
+                   {
+                     return {net.places_by_id().find(id)->marking};
+                   });
 }
 
 /*------------------------------------------------------------------------------------------------*/

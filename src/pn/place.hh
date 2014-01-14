@@ -11,7 +11,7 @@ namespace pnmc { namespace pn {
 struct place
 {
   /// @brief This place's id.
-  const std::string id;
+  const unsigned int id;
 
   /// @brief This place's marking.
   unsigned int marking;
@@ -20,7 +20,7 @@ struct place
   const unsigned int unit;
 
   /// @brief Constructor.
-  place(const std::string& id, unsigned int m, unsigned int u);
+  place(unsigned int id, unsigned int marking, unsigned int unit);
 };
 
 /*------------------------------------------------------------------------------------------------*/

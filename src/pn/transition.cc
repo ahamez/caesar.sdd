@@ -6,7 +6,7 @@ namespace pnmc { namespace pn {
 
 /*------------------------------------------------------------------------------------------------*/
 
-transition::transition(const std::string& id, std::size_t index)
+transition::transition(unsigned int id, std::size_t index)
   : id(id), index(index), pre(), post()
 {}
 

@@ -4,8 +4,8 @@ namespace pnmc { namespace pn {
 
 /*------------------------------------------------------------------------------------------------*/
 
-module_node::module_node(const std::string& i)
-  : nested(), id(i)
+module_node::module_node(unsigned int id)
+  : nested(), id(id)
 {}
 
 /*------------------------------------------------------------------------------------------------*/

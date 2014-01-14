@@ -15,11 +15,12 @@ mc::mc(const conf::pnmc_configuration& conf)
 std::unique_ptr<mc_impl>
 mc::mk_impl(const conf::pnmc_configuration& conf)
 {
-  switch (conf.encoding)
-  {
-    case conf::pn_encoding::places : return std::unique_ptr<mc_impl>(new places::worker(conf));
-    default /* units */            : return std::unique_ptr<mc_impl>(new units::worker(conf));
-  }
+  return std::unique_ptr<mc_impl>(new places::worker(conf));
+//  switch (conf.encoding)
+//  {
+//    case conf::pn_encoding::places : return std::unique_ptr<mc_impl>(new places::worker(conf));
+//    default /* units */            : return std::unique_ptr<mc_impl>(new units::worker(conf));
+//  }
 }
 
 /*------------------------------------------------------------------------------------------------*/

@@ -10,9 +10,9 @@ namespace pnmc { namespace pn {
 struct add_post_place_to_transition
 {
   const unsigned int new_valuation;
-  const std::string new_place_id;
+  const unsigned int new_place_id;
 
-  add_post_place_to_transition(unsigned int valuation, const std::string& id)
+  add_post_place_to_transition(unsigned int valuation, unsigned int id)
 	  : new_valuation(valuation), new_place_id(id)
   {}
 
@@ -30,9 +30,9 @@ struct add_post_place_to_transition
 struct add_pre_place_to_transition
 {
   const unsigned int new_valuation;
-  const std::string new_place_id;
+  const unsigned int new_place_id;
 
-  add_pre_place_to_transition(unsigned int valuation, const std::string& id)
+  add_pre_place_to_transition(unsigned int valuation, unsigned int id)
   	: new_valuation(valuation), new_place_id(id)
   {}
 
@@ -66,13 +66,13 @@ struct update_place_helper
 /*------------------------------------------------------------------------------------------------*/
 
 net::net()
-  : name(), places_set(), transitions_set(), modules(nullptr), units()
+  : name(), places_set(), transitions_set(), modules(nullptr), units(), root_unit(), initial_place()
 {}
 
 /*------------------------------------------------------------------------------------------------*/
 
 const place&
-net::add_place(const std::string& pid, unsigned int marking, unsigned int unit)
+net::add_place(unsigned int pid, unsigned int marking, unsigned int unit)
 {
   const auto cit = places_by_id().find(pid);
   assert(cit == places_by_id().cend());
@@ -82,9 +82,9 @@ net::add_place(const std::string& pid, unsigned int marking, unsigned int unit)
 /*------------------------------------------------------------------------------------------------*/
 
 void
-net::update_place(const std::string pid, unsigned int marking)
+net::update_place(unsigned int id, unsigned int marking)
 {
-  const auto cit = places_by_id().find(pid);
+  const auto cit = places_by_id().find(id);
   assert(cit != places_by_id().cend());
   places_set.get<id_index>().modify(cit, update_place_helper(marking));
 }
@@ -92,13 +92,13 @@ net::update_place(const std::string pid, unsigned int marking)
 /*------------------------------------------------------------------------------------------------*/
 
 const transition&
-net::add_transition(const std::string& tid)
+net::add_transition(unsigned int id)
 {
   static std::size_t transition_index = 0;
-  const auto cit = transitions_set.get<id_index>().find(tid);
+  const auto cit = transitions_set.get<id_index>().find(id);
   if (cit == transitions_set.get<id_index>().cend())
   {
-    return *transitions_set.get<id_index>().insert({tid, transition_index++}).first;
+    return *transitions_set.get<id_index>().insert({id, transition_index++}).first;
   }
   else
   {
@@ -109,20 +109,20 @@ net::add_transition(const std::string& tid)
 /*------------------------------------------------------------------------------------------------*/
 
 void
-net::add_post_place(const std::string& tid, const std::string& post, unsigned int valuation)
+net::add_post_place(unsigned int id, unsigned int post, unsigned int valuation)
 {
   assert(places_by_id().find(post) != places_by_id().end());
-  const auto it = transitions_set.get<id_index>().find(tid);
+  const auto it = transitions_set.get<id_index>().find(id);
   transitions_set.modify(it, add_post_place_to_transition(valuation, post));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
 void
-net::add_pre_place(const std::string& tid, const std::string& pre, unsigned int valuation)
+net::add_pre_place(unsigned int id, unsigned int pre, unsigned int valuation)
 {
   assert(places_by_id().find(pre) != places_by_id().end());
-  const auto it = transitions_set.get<id_index>().find(tid);
+  const auto it = transitions_set.get<id_index>().find(id);
   transitions_set.modify(it, add_pre_place_to_transition(valuation, pre));
 }
 

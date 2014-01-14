@@ -226,9 +226,9 @@ struct interval
 struct prefix
 {
   const char p_;
-  std::string* res_;
+  unsigned int* res_;
 
-  prefix(char p, std::string& res)
+  prefix(char p, unsigned int& res)
     : p_(p), res_(&res)
   {}
 
@@ -250,11 +250,14 @@ struct prefix
     {
       throw parse_error("Expected a prefixed value, got " + s);
     }
-    if (manip.res_)
+    try
     {
-      *manip.res_ = s.substr(1);
+      *manip.res_ = std::stoi(s.substr(1));
     }
-
+    catch (const std::invalid_argument&)
+    {
+      throw parse_error("Expected a value, got " + s);
+    }
     return in;
   }
 };
@@ -273,54 +276,44 @@ bpn(std::istream& in)
   std::string s0, s1;
 
   // map a unit id to its corresponding module and its nested modules
-  using module_places = std::pair< pn::module                 // corresponding module
-                                 , std::vector<std::string>>; // nested modules' names
-  std::unordered_map<std::string, module_places> modules;
+  using module_places = std::pair< pn::module                  // corresponding module
+                                 , std::vector<unsigned int>>; // nested modules' id
+  std::unordered_map<unsigned int, module_places> modules;
 
   in >> kw("places") >> sharp() >> interval();
-
-  unsigned int initial_place;
-  in >> kw("initial") >> kw("place") >> uint(initial_place);
+  in >> kw("initial") >> kw("place") >> uint(net.initial_place);
 
   unsigned int nb_units;
   in >> kw("units") >> sharp(nb_units) >> interval();
-
   net.units.resize(nb_units);
 
   // units
-  unsigned int root_module_nb;
-  in >> kw("root") >> kw("unit") >> uint(root_module_nb);
-
-  const auto root_module = std::to_string(root_module_nb);
+  in >> kw("root") >> kw("unit") >> uint(net.root_unit);
 
   while (nb_units > 0)
   {
-    unsigned int nb_nested_units, first, last;
+    unsigned int unit_nb, nb_nested_units, first, last;
     std::string module_name;
-    in >> prefix('U', module_name) >> sharp() >> interval(first, last) >> sharp(nb_nested_units);
+    in >> prefix('U', unit_nb) >> sharp() >> interval(first, last) >> sharp(nb_nested_units);
 
-    const unsigned int module_nb = std::stoi(module_name);
-
-    pn::module_node m("U" + module_name);
+    pn::module_node m(unit_nb);
     for (unsigned int i = first; i <= last; ++i)
     {
-      const auto& p = net.add_place(std::to_string(i), 0, module_nb);
+      const auto& p = net.add_place(i, 0, unit_nb);
       m.add_module(pn::make_module(p));
-      net.units[module_nb].push_back(p);
     }
-    const auto insertion = modules.emplace( "U" + module_name
+
+    const auto insertion = modules.emplace( unit_nb
                                           , std::make_pair( pn::make_module(m)
-                                                          , std::vector<std::string>()));
+                                                          , std::vector<unsigned int>()));
 
     // nested modules
     for (unsigned int i = 0; i < nb_nested_units; ++i)
     {
-      if (not(in >> s1))
-      {
-        throw parse_error();
-      }
+      unsigned int sub_unit;
+      in >> uint(sub_unit);
       // keep the name of the nested unit
-      insertion.first->second.second.push_back("U" + s1);
+      insertion.first->second.second.push_back(sub_unit);
     }
 
     --nb_units;
@@ -331,20 +324,17 @@ bpn(std::istream& in)
   in >> kw("transitions") >> sharp(nb_transitions) >> interval();
   while (nb_transitions > 0)
   {
-    // input places
-    unsigned int nb_places;
-    std::string transition_id;
-    in >> prefix('T', transition_id) >> sharp(nb_places);
+    unsigned int nb_places, transition_id;
 
+    in >> prefix('T', transition_id) >> sharp(nb_places);
     net.add_transition(transition_id);
 
+    // input places
     while (nb_places > 0)
     {
-      if (not (in >> s0))
-      {
-        throw parse_error();
-      }
-      net.add_pre_place(transition_id, s0, 1);
+      unsigned int place_id;
+      in >> uint(place_id);
+      net.add_pre_place(transition_id, place_id, 1);
       --nb_places;
     }
 
@@ -352,11 +342,9 @@ bpn(std::istream& in)
     in >> sharp(nb_places);
     while (nb_places > 0)
     {
-      if (not (in >> s0))
-      {
-        throw parse_error();
-      }
-      net.add_post_place(transition_id, s0, 1);
+      unsigned int place_id;
+      in >> uint(place_id);
+      net.add_post_place(transition_id, place_id, 1);
       --nb_places;
     }
 
@@ -364,17 +352,17 @@ bpn(std::istream& in)
   }
 
   // Set marking of initial place.
-  net.update_place(std::to_string(initial_place), 1);
+  net.update_place(net.initial_place, 1);
 
   for (auto& kv : modules)
   {
-    for (const auto& module_name : kv.second.second)
+    for (const auto& unit_id : kv.second.second)
     {
-      const auto nested_module = modules[module_name].first;
+      const auto nested_module = modules[unit_id].first;
       boost::get<pn::module_node>(*kv.second.first).add_module(nested_module);
     }
   }
-  net.modules = modules["U" + root_module].first;
+  net.modules = modules[net.root_unit].first;
 
   return net_ptr;
 }

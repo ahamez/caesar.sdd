@@ -13,7 +13,7 @@ namespace pnmc { namespace pn {
 struct transition
 {
   /// @brief This transition's id.
-  const std::string id;
+  const unsigned int id;
 
   /// @brief This transition's index.
   ///
@@ -22,13 +22,13 @@ struct transition
   const std::size_t index;
 
   /// @brief Pre-places
-  std::multimap<std::string, unsigned int> pre;
+  std::multimap<unsigned int, unsigned int> pre;
 
   /// @brief Post-places
-  std::multimap<std::string, unsigned int> post;
+  std::multimap<unsigned int, unsigned int> post;
 
   /// @brief Constructor.
-  transition(const std::string& id, std::size_t index);
+  transition(unsigned int id, std::size_t index);
 };
 
 /*------------------------------------------------------------------------------------------------*/

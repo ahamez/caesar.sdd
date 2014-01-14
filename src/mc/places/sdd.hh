@@ -10,7 +10,8 @@ namespace pnmc { namespace mc { namespace places {
 struct sdd_conf
   : public sdd::conf0
 {
-  using Variable = unsigned int;
+  using Identifier = unsigned int;
+  using Variable   = unsigned int;
 };
 
 using SDD = sdd::SDD<sdd_conf>;

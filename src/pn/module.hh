@@ -26,10 +26,10 @@ struct module_node
   std::vector<module> nested;
 
   /// @brief
-  const std::string id;
+  const unsigned int id;
 
   /// @brief Constructor.
-  module_node(const std::string&);
+  module_node(unsigned int id);
 
   /// @brief
   void

@@ -42,6 +42,9 @@ private:
   /// @brief A tag to identify the view ordered by indices for boost::multi_index.
   struct index_index{};
 
+  /// @brief
+  struct unit_index{};
+
 public:
 
   /// @brief The type of the set of all places.
@@ -54,11 +57,11 @@ public:
 
                   // sort by id
                   ,  ordered_unique< tag<id_index>
-                                   , member<place, const std::string, &place::id>>
+                                   , member<place, const unsigned int, &place::id>>
 
-                  // sort by marking
-                  , ordered_non_unique< tag<marking_index>
-                                      , member<place, unsigned int, &place::marking>>
+                  // sort by unit
+                  , ordered_non_unique< tag<unit_index>
+                                      , member<place, const unsigned int, &place::unit>>
               >
           > places_type;
 
@@ -69,7 +72,7 @@ public:
 
                    // sort by id
                      ordered_unique< tag<id_index>
-                                   , member<transition, const std::string, &transition::id>>
+                                   , member<transition, const unsigned int, &transition::id>>
 
                    // sort by index
                    , ordered_unique< tag<index_index>
@@ -90,32 +93,36 @@ public:
   module modules;
 
   /// @brief BPN units.
-  std::deque<std::deque<std::reference_wrapper<const place>>> units;
+  std::vector<std::deque<std::reference_wrapper<const place>>> units;
+
+  unsigned int root_unit;
+
+  unsigned int initial_place;
 
   /// @brief Default constructor.
   net();
 
   /// @brief Add a place.
   const place&
-  add_place(const std::string& id, unsigned int marking, unsigned int unit);
+  add_place(unsigned int id, unsigned int marking, unsigned int unit);
 
   /// @brief Add a transition.
   ///
   /// If the transition already exists, no operation is done.
   const transition&
-  add_transition(const std::string& tid);
+  add_transition(unsigned int tid);
 
   /// @brief Add a post place to a transition.
   void
-  add_post_place(const std::string& tid, const std::string& post, unsigned int marking);
+  add_post_place(unsigned int id, unsigned int post, unsigned int marking);
 
   /// @brief Add a pre place to a transition.
   void
-  add_pre_place(const std::string& tid, const std::string& pre, unsigned int marking);
+  add_pre_place(unsigned int id, unsigned int pre, unsigned int marking);
 
   /// @brief Update a place.
   void
-  update_place(const std::string pid, unsigned int marking);
+  update_place(unsigned int id, unsigned int marking);
 
   /// @brief Return all places by insertion order.
   const places_type::index<insertion_index>::type&

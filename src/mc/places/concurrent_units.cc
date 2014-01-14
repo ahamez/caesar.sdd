@@ -19,7 +19,7 @@ query(const pn::net& net, const sdd::order<sdd_conf>& order, std::size_t i, std:
   {
     for (const auto& pj : net.units[j])
     {
-      q += SDD(order, [&](const std::string& id)
+      q += SDD(order, [&](unsigned int id)
                           {
                             return id == pi.get().id or id == pj.get().id
                                  ? sdd::values::bitset<64>({1})
