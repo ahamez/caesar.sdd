@@ -1,7 +1,6 @@
 #include <algorithm> // any_of
 #include <iostream>
 #include <string>
-#include <unordered_map>
 
 #include "parsers/bpn.hh"
 #include "parsers/helpers.hh"
@@ -284,7 +283,7 @@ bpn(std::istream& in)
   // units
   in >> kw("root") >> kw("unit") >> uint(net.root_unit);
 
-  while (nb_units > 0)
+  for (; nb_units > 0; --nb_units)
   {
     unsigned int unit_nb, nb_nested_units, first, last;
     in >> prefix('U', unit_nb) >> sharp() >> interval(first, last) >> sharp(nb_nested_units);
@@ -300,14 +299,12 @@ bpn(std::istream& in)
       unsigned int sub_unit;
       in >> uint(sub_unit);
     }
-
-    --nb_units;
   }
 
   // transitions
   unsigned int nb_transitions;
   in >> kw("transitions") >> sharp(nb_transitions) >> interval();
-  while (nb_transitions > 0)
+  for(; nb_transitions > 0; --nb_transitions)
   {
     unsigned int nb_places, transition_id;
 
@@ -315,25 +312,21 @@ bpn(std::istream& in)
     net.add_transition(transition_id);
 
     // input places
-    while (nb_places > 0)
+    for (; nb_places > 0; --nb_places)
     {
       unsigned int place_id;
       in >> uint(place_id);
       net.add_pre_place(transition_id, place_id, 1);
-      --nb_places;
     }
 
     // output places
     in >> sharp(nb_places);
-    while (nb_places > 0)
+    for (; nb_places > 0; --nb_places)
     {
       unsigned int place_id;
       in >> uint(place_id);
       net.add_post_place(transition_id, place_id, 1);
-      --nb_places;
     }
-
-    --nb_transitions;
   }
 
   // Set marking of initial place.
