@@ -2,7 +2,6 @@
 #define _PNMC_PN_TRANSITION_HH_
 
 #include <iosfwd>
-#include <limits>
 #include <map>
 
 namespace pnmc { namespace pn {
@@ -15,12 +14,6 @@ struct transition
   /// @brief This transition's id.
   const unsigned int id;
 
-  /// @brief This transition's index.
-  ///
-  /// Used to compute dead transitions: this index is used to get the position of this transition
-  /// into a bitset describing all transitions' status.
-  const std::size_t index;
-
   /// @brief Pre-places
   std::multimap<unsigned int, unsigned int> pre;
 
@@ -28,7 +21,7 @@ struct transition
   std::multimap<unsigned int, unsigned int> post;
 
   /// @brief Constructor.
-  transition(unsigned int id, std::size_t index);
+  transition(unsigned int id);
 };
 
 /*------------------------------------------------------------------------------------------------*/

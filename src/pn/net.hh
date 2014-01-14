@@ -39,9 +39,6 @@ private:
   /// @brief A tag to identify the view ordered by markings for boost::multi_index.
   struct marking_index{};
 
-  /// @brief A tag to identify the view ordered by indices for boost::multi_index.
-  struct index_index{};
-
   /// @brief
   struct unit_index{};
 
@@ -74,9 +71,6 @@ public:
                      ordered_unique< tag<id_index>
                                    , member<transition, const unsigned int, &transition::id>>
 
-                   // sort by index
-                   , ordered_unique< tag<index_index>
-                                   , member<transition, const std::size_t, &transition::index>>
               >
          > transitions_type;
 
@@ -135,10 +129,6 @@ public:
   /// @brief Return all transitions.
   const transitions_type::index<id_index>::type&
   transitions() const noexcept;
-
-  /// @brief Get a transition using its index.
-  const transition&
-  get_transition_by_index(std::size_t index) const;
 };
 
 /*------------------------------------------------------------------------------------------------*/

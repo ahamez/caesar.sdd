@@ -94,11 +94,10 @@ net::update_place(unsigned int id, unsigned int marking)
 const transition&
 net::add_transition(unsigned int id)
 {
-  static std::size_t transition_index = 0;
   const auto cit = transitions_set.get<id_index>().find(id);
   if (cit == transitions_set.get<id_index>().cend())
   {
-    return *transitions_set.get<id_index>().insert({id, transition_index++}).first;
+    return *transitions_set.get<id_index>().insert(transition(id)).first;
   }
   else
   {
@@ -151,15 +150,6 @@ net::transitions()
 const noexcept
 {
   return transitions_set.get<id_index>();
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-const transition&
-net::get_transition_by_index(std::size_t index)
-const
-{
-  return *transitions_set.get<index_index>().find(index);
 }
 
 /*------------------------------------------------------------------------------------------------*/

@@ -154,7 +154,7 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
       if (conf.compute_dead_transitions)
       {
         const auto f = ValuesFunction<sdd_conf>( o, arc_cit->first
-                                               , post_live(transition.index, transitions_bitset));
+                                               , post_live(transition.id, transitions_bitset));
         h_t = Composition(h_t, sdd::carrier(o, arc_cit->first, f));
       }
       else
