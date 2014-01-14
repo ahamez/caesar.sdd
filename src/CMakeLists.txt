@@ -6,6 +6,8 @@ set(SOURCES
     mc/places/post_live.cc
     mc/places/pre.cc
     mc/places/worker.cc
+    mc/units/post.cc
+    mc/units/pre.cc
     mc/units/worker.cc
     mc/mc.cc
     mc/mc_impl.cc
@@ -13,7 +15,6 @@ set(SOURCES
     parsers/helpers.cc
     parsers/parse_error.cc
     parsers/parse.cc
-    pn/module.cc
     pn/net.cc
     pn/place.cc
     pn/transition.cc
