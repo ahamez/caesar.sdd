@@ -1,5 +1,6 @@
 #include <chrono>
 #include <ostream>
+#include <unordered_set>
 
 #include <sdd/values/bitset.hh>
 
@@ -17,9 +18,10 @@ struct nested_query_visitor
 
   const sdd::values::flat_set<unsigned int>& empty;
   const unsigned int j;
+  mutable std::unordered_set<const sdd::flat_node<sdd_conf>*> cache;
 
   nested_query_visitor(const sdd::values::flat_set<unsigned int>& empty, unsigned int j)
-    : empty(empty), j(j)
+    : empty(empty), j(j), cache()
   {}
 
   bool
@@ -50,23 +52,27 @@ struct nested_query_visitor
   operator()(const sdd::flat_node<sdd_conf>& node, const order& o)
   const noexcept
   {
-    if (o.identifier().user() == j)
+    const auto insertion = cache.emplace(&node);
+    if (insertion.second)
     {
-      for (const auto& arc : node)
+      if (o.identifier().user() == j)
       {
-        if (arc.valuation() != empty)
+        for (const auto& arc : node)
         {
-          return true;
+          if (arc.valuation() != empty)
+          {
+            return true;
+          }
         }
       }
-    }
-    else
-    {
-      for (const auto& arc : node)
+      else
       {
-        if (visit(*this, arc.successor(), o.next()))
+        for (const auto& arc : node)
         {
-          return true;
+          if (visit(*this, arc.successor(), o.next()))
+          {
+            return true;
+          }
         }
       }
     }
@@ -81,9 +87,10 @@ struct query_visitor
   const sdd::values::flat_set<unsigned int>& empty;
   const unsigned int i;
   const unsigned int j;
+  mutable std::unordered_set<const sdd::flat_node<sdd_conf>*> cache;
 
   query_visitor(const sdd::values::flat_set<unsigned int>& empty, unsigned int i, unsigned int j)
-    : empty(empty), i(i), j(j)
+    : empty(empty), i(i), j(j), cache()
   {}
 
   bool
@@ -114,26 +121,30 @@ struct query_visitor
   operator()(const sdd::flat_node<sdd_conf>& node, const order& o)
   const noexcept
   {
-    if (o.identifier().user() == i)
+    const auto insertion = cache.emplace(&node);
+    if (insertion.second)
     {
-      for (const auto& arc : node)
+      if (o.identifier().user() == i)
       {
-        if (arc.valuation() != empty)
+        for (const auto& arc : node)
         {
-          if (visit(nested_query_visitor(empty, j), arc.successor(), o.next()))
+          if (arc.valuation() != empty)
           {
-            return true;
+            if (visit(nested_query_visitor(empty, j), arc.successor(), o.next()))
+            {
+              return true;
+            }
           }
         }
       }
-    }
-    else
-    {
-      for (const auto& arc : node)
+      else
       {
-        if (visit(*this, arc.successor(), o.next()))
+        for (const auto& arc : node)
         {
-          return true;
+          if (visit(*this, arc.successor(), o.next()))
+          {
+            return true;
+          }
         }
       }
     }
