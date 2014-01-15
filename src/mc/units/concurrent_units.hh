@@ -1,14 +1,20 @@
-//
-//  concurrent_units.h
-//  caesar.sdd
-//
-//  Created by Alexandre Hamez on 14/01/2014.
-//  Copyright (c) 2014 ISAE. All rights reserved.
-//
+#ifndef _PNMC_MC_UNITS_CONCURRENT_UNITS_HH_
+#define _PNMC_MC_UNITS_CONCURRENT_UNITS_HH_
 
-#ifndef __caesar_sdd__concurrent_units__
-#define __caesar_sdd__concurrent_units__
+#include "conf/configuration.hh"
+#include "mc/units/sdd.hh"
+#include "pn/net.hh"
 
-#include <iostream>
+namespace pnmc { namespace mc { namespace units {
 
-#endif /* defined(__caesar_sdd__concurrent_units__) */
+/*------------------------------------------------------------------------------------------------*/
+
+void
+compute_concurrent_units( const conf::pnmc_configuration&, const pn::net&
+                        , const sdd::order<sdd_conf>&, SDD);
+
+/*------------------------------------------------------------------------------------------------*/
+
+}}} // namespace pnmc::mc::units
+
+#endif // _PNMC_MC_UNITS_CONCURRENT_UNITS_HH_
