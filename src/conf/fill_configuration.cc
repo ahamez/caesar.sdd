@@ -30,7 +30,7 @@ encoding(const po::variables_map& vm)
 
   if (not (places or units))
   {
-    return pn_encoding::places;
+    return pn_encoding::units;
   }
   else if (not (places xor units))
   {
