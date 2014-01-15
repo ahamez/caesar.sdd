@@ -6,6 +6,7 @@ set(SOURCES
     mc/places/post_live.cc
     mc/places/pre.cc
     mc/places/worker.cc
+    mc/units/concurrent_units.cc
     mc/units/post.cc
     mc/units/post_live.cc
     mc/units/pre.cc

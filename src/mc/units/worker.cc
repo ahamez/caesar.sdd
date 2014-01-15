@@ -7,6 +7,7 @@
 
 #include <boost/dynamic_bitset.hpp>
 
+#include "mc/units/concurrent_units.hh"
 #include "mc/units/post.hh"
 #include "mc/units/post_live.hh"
 #include "mc/units/pre.hh"
@@ -176,6 +177,11 @@ const
 
   const auto n = sdd::count_combinations(m);
   std::cerr << n.template convert_to<long double>() << " states" << std::endl;
+
+  if (conf.compute_concurrent_units)
+  {
+    compute_concurrent_units(conf, net, o, m);
+  }
 
   if (conf.show_hash_tables_stats)
   {
