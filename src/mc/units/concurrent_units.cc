@@ -183,7 +183,7 @@ compute_concurrent_units( const conf::pnmc_configuration& conf, const pn::net& n
   {
     for (unsigned int j = 0; j < j_end; ++j)
     {
-      if (i == j)
+      if (i == j or net.places_of_unit(i).empty() or net.places_of_unit(j).empty())
       {
         std::cout << "0 ";
       }
