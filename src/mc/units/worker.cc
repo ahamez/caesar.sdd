@@ -23,12 +23,19 @@ namespace chrono = std::chrono;
 order
 mk_order(const pn::net& net)
 {
-  order_builder ob;
-  for (unsigned int i = 0; i < net.units_size(); ++i)
+  std::vector<unsigned int> units;
+  units.reserve(net.units_size());
+  for (const auto& p : net.places())
   {
-    ob.push(i);
+    if (not net.places_of_unit(p.unit).empty())
+    {
+      if (units.back() != p.unit)
+      {
+        units.push_back(p.unit);
+      }
+    }
   }
-  return ob;
+  return {order_builder(units.begin(), units.end())};
 }
 
 /*------------------------------------------------------------------------------------------------*/
