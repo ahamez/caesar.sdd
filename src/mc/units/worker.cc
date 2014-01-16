@@ -29,7 +29,7 @@ mk_order(const pn::net& net)
   {
     if (not net.places_of_unit(p.unit).empty())
     {
-      if (units.back() != p.unit)
+      if (units.empty() or units.back() != p.unit)
       {
         units.push_back(p.unit);
       }
