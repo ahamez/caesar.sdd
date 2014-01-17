@@ -36,7 +36,7 @@ struct post_live
 bool
 operator==(const post_live& lhs, const post_live& rhs) noexcept;
 
-/// @brief Textual output of a post.
+/// @brief Textual output of a post_live.
 std::ostream&
 operator<<(std::ostream&, const post_live&);
 
