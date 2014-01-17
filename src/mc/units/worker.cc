@@ -8,6 +8,7 @@
 #include <boost/dynamic_bitset.hpp>
 
 #include "mc/units/concurrent_units.hh"
+#include "mc/units/nopost_live.hh"
 #include "mc/units/post.hh"
 #include "mc/units/post_live.hh"
 #include "mc/units/pre.hh"
@@ -66,9 +67,18 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
   std::set<homomorphism> operands;
   operands.insert(Id<sdd_conf>());
 
+  // When computing dead transitions, we need to start numbering them from 0 as we use this
+  // value as an index in the bitset.
+  unsigned int tindex = 0;
+
   for (const auto& transition : net.transitions())
   {
     homomorphism h_t = Id<sdd_conf>();
+
+    if (transition.post.empty() and transition.pre.empty())
+    {
+      continue;
+    }
 
     if (not transition.post.empty())
     {
@@ -78,7 +88,7 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
       {
         const auto f
           = ValuesFunction<sdd_conf>( o, net.unit_of_place(arc_cit->first)
-                                    , post_live(arc_cit->first, transition.id, transitions_bitset));
+                                    , post_live(arc_cit->first, tindex++, transitions_bitset));
         h_t = Composition(h_t, sdd::carrier(o, net.unit_of_place(arc_cit->first), f));
       }
       else
@@ -93,6 +103,16 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
           = ValuesFunction<sdd_conf>(o, net.unit_of_place(arc_cit->first), post(arc_cit->first));
         h_t = Composition(h_t, sdd::carrier(o, net.unit_of_place(arc_cit->first), f));
       }
+    }
+    else if (conf.compute_dead_transitions)
+    {
+      // Target the same variable as the pre that is fired just before this fake post.
+      const auto unit = transition.pre.begin()->first;
+
+      const auto f
+        = ValuesFunction<sdd_conf>( o, unit
+                                  , nopost_live(tindex++, transitions_bitset));
+      h_t = Composition(h_t, sdd::carrier(o, unit, f));
     }
 
     // pre actions.
