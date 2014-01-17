@@ -75,12 +75,12 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
   {
     homomorphism h_t = Id<sdd_conf>();
 
-    if (transition.post.empty() and transition.pre.empty())
+    if (transition.post.empty() and transition.pre.empty() and conf.compute_dead_transitions)
     {
-      continue;
+      // Empty transition, but we need to increment the transition counter.
+      ++tindex;
     }
-
-    if (not transition.post.empty())
+    else if (not transition.post.empty())
     {
       // post actions.
       auto arc_cit = transition.post.begin();
