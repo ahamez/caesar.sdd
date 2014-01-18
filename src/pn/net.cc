@@ -149,7 +149,9 @@ net::places_of_unit(unsigned int i)
 const
 {
   const auto p = places_.get<unit_index>().equal_range(i);
-  return std::vector<std::reference_wrapper<const place>>(p.first, p.second);
+  std::vector<std::reference_wrapper<const place>> res(p.first, p.second);
+  std::sort(res.begin(), res.end());
+  return res;
 }
 
 /*------------------------------------------------------------------------------------------------*/
