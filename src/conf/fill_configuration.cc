@@ -71,7 +71,9 @@ fill_configuration(int argc, char** argv)
   po::options_description pn_options("Petri net options");
   pn_options.add_options()
     ("places"                 , "Use one variable per place")
-    ("units"                  , "Use one variable per unit");
+    ("units"                  , "Use one variable per unit")
+    ("export-tina"            , po::value<std::string>()
+                              , "Export the BPN to the TINA format");
 
   po::options_description hom_options("Homomorphisms options");
   hom_options.add_options()
@@ -141,6 +143,11 @@ fill_configuration(int argc, char** argv)
   if (not conf.read_stdin)
   {
     conf.file_name = vm["input-file"].as<std::string>();
+  }
+  conf.export_to_tina = vm.count("export-tina");
+  if (conf.export_to_tina)
+  {
+    conf.tina_file_name = vm["export-tina"].as<std::string>();
   }
   conf.order_show = vm.count("show-order");
   conf.encoding = encoding(vm);

@@ -20,6 +20,7 @@ set(SOURCES
     parsers/parse.cc
     pn/net.cc
     pn/place.cc
+    pn/tina.cc
     pn/transition.cc
     )
 

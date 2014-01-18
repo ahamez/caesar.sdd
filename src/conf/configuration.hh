@@ -13,6 +13,8 @@ struct pnmc_configuration
 {
   std::string file_name;
   bool read_stdin;
+  bool export_to_tina;
+  std::string tina_file_name;
 
   pn_encoding encoding;
 
