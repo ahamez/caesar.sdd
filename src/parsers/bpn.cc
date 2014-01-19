@@ -3,7 +3,6 @@
 #include <string>
 
 #include "parsers/bpn.hh"
-#include "parsers/helpers.hh"
 #include "parsers/parse_error.hh"
 
 namespace pnmc { namespace parsers {
@@ -162,6 +161,33 @@ struct sharp
     catch (const std::invalid_argument&)
     {
       throw parse_error("Expected a #value, got " + s);
+    }
+    return in;
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+struct kw
+{
+  const std::string keyword;
+
+  kw(const std::string& k)
+    : keyword(k)
+  {}
+
+  friend
+  std::istream&
+  operator>>(std::istream& in, const kw& manip)
+  {
+    std::string s;
+    if (not (in >> s))
+    {
+      throw parse_error("Expected " + manip.keyword + ", got nothing.");
+    }
+    else if (s != manip.keyword)
+    {
+      throw parse_error("Expected " + manip.keyword + ", got " + s);
     }
     return in;
   }
