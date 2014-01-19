@@ -7,6 +7,7 @@
 
 #include <boost/dynamic_bitset.hpp>
 
+#include "mc/places/nopost_live.hh"
 #include "mc/places/post.hh"
 #include "mc/places/post_live.hh"
 #include "mc/places/pre.hh"
@@ -57,18 +58,27 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
   std::set<homomorphism> operands;
   operands.insert(Id<sdd_conf>());
 
+  // When computing dead transitions, we need to start numbering them from 0 as we use this
+  // value as an index in the bitset.
+  unsigned int tindex = 0;
+
   for (const auto& transition : net.transitions())
   {
     homomorphism h_t = Id<sdd_conf>();
 
-    if (not transition.post.empty())
+    if (transition.post.empty() and transition.pre.empty() and conf.compute_dead_transitions)
+    {
+      // Empty transition, but we need to increment the transition counter.
+      ++tindex;
+    }
+    else if (not transition.post.empty())
     {
       // post actions.
       auto arc_cit = transition.post.begin();
       if (conf.compute_dead_transitions)
       {
         const auto f = ValuesFunction<sdd_conf>( o, arc_cit->first
-                                               , post_live(transition.id, transitions_bitset));
+                                               , post_live(tindex++, transitions_bitset));
         h_t = Composition(h_t, sdd::carrier(o, arc_cit->first, f));
       }
       else
@@ -81,6 +91,16 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
         homomorphism f = ValuesFunction<sdd_conf>(o, arc_cit->first, post());
         h_t = Composition(h_t, sdd::carrier(o, arc_cit->first, f));
       }
+    }
+    else if (conf.compute_dead_transitions)
+    {
+      // Target the same variable as the pre that is fired just before this fake post.
+      const auto place = transition.pre.begin()->first;
+
+      const auto f
+        = ValuesFunction<sdd_conf>( o, place
+                                  , nopost_live(tindex++, transitions_bitset));
+      h_t = Composition(h_t, sdd::carrier(o, place, f));
     }
 
     // pre actions.
