@@ -1,0 +1,8 @@
+places #1 0...0
+initial place 0
+units #1 0...0
+root unit 0
+U0 #1 0...0 #0 
+transitions #2 1...2
+T1 #1 0 #0 
+T2 #1 0 #0 
