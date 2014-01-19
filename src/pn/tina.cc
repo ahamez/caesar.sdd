@@ -26,7 +26,8 @@ tina(std::ostream& out, const net& net)
 
   for (const auto& place : net.places())
   {
-    out << "pl p" << place.id << "(" << place.marking << ")\n";
+    out << "pl p" << place.id << " : U" << net.unit_of_place(place) << " (" << place.marking
+        << ")\n";
   }
 
   out << "net generated_net\n";
