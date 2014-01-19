@@ -45,11 +45,11 @@ SDD
 initial_state(const order& o, const pn::net& net)
 {
   using flat_set = sdd::values::flat_set<unsigned int>;
-  return SDD(o, [&](unsigned int i)
+  return SDD(o, [&](unsigned int unit)
                    -> flat_set
                    {
-                     return i == net.root_unit ? flat_set({net.initial_place + 1})
-                                               : flat_set({0});}
+                     return unit == net.root_unit ? flat_set({net.initial_place + 1})
+                                                  : flat_set({0});}
             );
 }
 
