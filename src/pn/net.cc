@@ -165,6 +165,15 @@ const
 
 /*------------------------------------------------------------------------------------------------*/
 
+unsigned int
+net::unit_of_place(const place& p)
+const
+{
+  return places_.get<id_index>().find(p.id)->unit;
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
 std::size_t
 net::units_size()
 const noexcept
