@@ -179,20 +179,27 @@ const
 
   const auto o = mk_order(net);
   assert(not o.empty() && "Empty order");
+
   if (conf.order_show)
   {
     std::cout << o << std::endl;
   }
 
   const SDD m0 = initial_state(o, net);
-
   const homomorphism h = transition_relation(conf, o, net, transitions_bitset);
+
   if (conf.show_relation)
   {
     std::cout << h << std::endl;
   }
 
   const SDD m = state_space(conf, o, m0, h);
+
+  if (conf.show_nb_states)
+  {
+    const auto n = sdd::count_combinations(m);
+    std::cout << n.template convert_to<long double>() << " states" << std::endl;
+  }
 
   if (conf.compute_dead_transitions)
   {
@@ -201,9 +208,6 @@ const
       std::cout << (!transitions_bitset[i]) << "\n";
     }
   }
-
-  const auto n = sdd::count_combinations(m);
-  std::cerr << n.template convert_to<long double>() << " states" << std::endl;
 
   if (conf.compute_concurrent_units)
   {

@@ -81,6 +81,7 @@ fill_configuration(int argc, char** argv)
 
   po::options_description stats_options("Statistics options");
   stats_options.add_options()
+    ("show-nb-states"           , "Show the number of states")
     ("show-hash-stats"          , "Show the hash tables statistics")
     ("show-time"                , "Show miscellaneous execution times");
 
@@ -149,6 +150,7 @@ fill_configuration(int argc, char** argv)
   {
     conf.tina_file_name = vm["export-tina"].as<std::string>();
   }
+  conf.show_nb_states = vm.count("show-nb-states");
   conf.order_show = vm.count("show-order");
   conf.encoding = encoding(vm);
   conf.order_force_flat = vm.count("flat");
