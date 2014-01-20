@@ -1,7 +1,9 @@
-#include <algorithm> // any_of
+#include <algorithm>  // any_of
+#include <functional> // reference_wrapper
 #include <iostream>
 #include <map>
 #include <string>
+#include <tuple>
 
 #include "parsers/bpn.hh"
 #include "parsers/parse_error.hh"
@@ -92,7 +94,7 @@ namespace pnmc { namespace parsers {
 // In each <input-place-list> and each <output-place-list>
 //  28. <min-place-nb> <= <place-nb> <= <max-place-nb>
 
-namespace {
+namespace /* anonymous */ {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -291,26 +293,30 @@ struct prefix
 
 /*------------------------------------------------------------------------------------------------*/
 
-using id_to_subids_type = std::map<unsigned int, std::vector<unsigned int>>;
-using id_to_places_type
-  = std::map<unsigned int, std::vector<std::reference_wrapper<const pn::place>>>;
+using units_maker_type = std::map< unsigned int
+                                 , std::tuple< std::vector<unsigned int> // nested units' ids
+                                             , std::vector<std::reference_wrapper<const pn::place>>
+                                             >
+                                 >;
 
 const pn::unit&
 unit_builder( std::set<const pn::unit>& res
-            , unsigned int id, const id_to_subids_type& id_to_subids
-            , const id_to_places_type& id_to_places)
+            , unsigned int id
+             , units_maker_type& map )
 {
   std::vector<std::reference_wrapper<const pn::unit>> units;
-  for (const auto id : id_to_subids.find(id)->second)
+  const auto search = map.find(id);
+  assert(search != map.end() && "Unit id not found.");
+  auto& subids = std::get<0>(search->second);
+  auto& places = std::get<1>(search->second);
+  for (const auto id : subids)
   {
-    units.emplace_back(unit_builder(res, id, id_to_subids, id_to_places));
+    units.emplace_back(unit_builder(res, id, map));
   }
-
-  std::vector<std::reference_wrapper<const pn::place>>
-    places(std::move(id_to_places.find(id)->second));
-
   return *res.emplace(id, std::move(places), std::move(units)).first;
 }
+
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace anonymous
 
@@ -319,10 +325,10 @@ unit_builder( std::set<const pn::unit>& res
 std::shared_ptr<pn::net>
 bpn(std::istream& in)
 {
-  id_to_subids_type id_to_subids;
-  id_to_places_type id_to_places;
+  // Temporarily stores nested units and places of a unit, indexed by its id.
+  units_maker_type map;
 
-  // temporary placeholders
+  // Temporary placeholders.
   std::string s0, s1;
   unsigned int ui0, ui1;
 
@@ -349,22 +355,25 @@ bpn(std::istream& in)
     unsigned int unit_id, nb_nested_units, first, last;
     in >> prefix('U', unit_id) >> sharp() >> interval(first, last) >> sharp(nb_nested_units);
 
-    auto insertion1
-      = id_to_places.emplace(unit_id, std::vector<std::reference_wrapper<const pn::place>>());
+    auto insertion
+      = map.emplace( unit_id
+                   , std::make_tuple( std::vector<unsigned int>()
+                                    , std::vector<std::reference_wrapper<const pn::place>>()));
+    auto& subids = std::get<0>(insertion.first->second);
+    auto& places = std::get<1>(insertion.first->second);
+
     // Places of this unit.
     for (unsigned int i = first; i <= last; ++i)
     {
       const auto& place = net.add_place(i, 0, unit_id);
-      insertion1.first->second.emplace_back(place);
+      places.emplace_back(place);
     }
 
     // Nested units.
-    auto insertion2 = id_to_subids.emplace(unit_id, std::vector<unsigned int>());
     for (unsigned int i = 0; i < nb_nested_units; ++i)
     {
-      unsigned int sub_unit_id;
-      in >> uint(sub_unit_id);
-      insertion2.first->second.emplace_back(sub_unit_id);
+      subids.emplace_back();
+      in >> uint(subids.back());
     }
   }
 
@@ -383,7 +392,7 @@ bpn(std::istream& in)
     {
       unsigned int place_id;
       in >> uint(place_id);
-      net.add_pre_place(transition_id, place_id, 1);
+      net.add_pre_place(transition_id, place_id, 1 /* arc valuation */);
     }
 
     // Output places.
@@ -392,7 +401,7 @@ bpn(std::istream& in)
     {
       unsigned int place_id;
       in >> uint(place_id);
-      net.add_post_place(transition_id, place_id, 1);
+      net.add_post_place(transition_id, place_id, 1 /* arc valuation */);
     }
   }
 
@@ -400,7 +409,7 @@ bpn(std::istream& in)
   net.update_place(net.initial_place(), 1);
 
   // Create units.
-  unit_builder(net.units(), net.root_unit(), id_to_subids, id_to_places);
+  unit_builder(net.units(), net.root_unit(), map);
 
   return net_ptr;
 }
