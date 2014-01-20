@@ -4,6 +4,8 @@
 
 namespace pnmc { namespace pn {
 
+namespace /* anonymous */ {
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Used by Boost.MultiIndex.
@@ -65,9 +67,50 @@ struct update_place_helper
 
 /*------------------------------------------------------------------------------------------------*/
 
-net::net()
-  : places_(), transitions_(), root_unit(), initial_place()
+} // namespace anonymous
+
+/*------------------------------------------------------------------------------------------------*/
+
+net::net(unsigned int p, unsigned int r)
+  : places_(), transitions_(), units_(), initial_place_(p), root_unit_(r)
 {}
+
+/*------------------------------------------------------------------------------------------------*/
+
+unsigned int
+net::initial_place()
+const noexcept
+{
+  return initial_place_;
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+unsigned int
+net::root_unit()
+const noexcept
+{
+  return root_unit_;
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+const std::set<const unit>&
+net::units()
+const noexcept
+{
+  return units_;
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @brief Return all units.
+std::set<const unit>&
+net::units()
+noexcept
+{
+  return units_;
+}
 
 /*------------------------------------------------------------------------------------------------*/
 

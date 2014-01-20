@@ -22,6 +22,7 @@ set(SOURCES
     pn/place.cc
     pn/tina.cc
     pn/transition.cc
+    pn/unit.cc
     )
 
 add_executable(caesar.sdd ${SOURCES})

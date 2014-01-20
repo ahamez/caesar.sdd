@@ -2,6 +2,7 @@
 #define _PNMC_PN_NET_HH_
 
 #include <functional> // reference_wrapper
+#include <set>
 #include <vector>
 
 #pragma GCC diagnostic push
@@ -17,6 +18,7 @@
 
 #include "pn/place.hh"
 #include "pn/transition.hh"
+#include "pn/unit.hh"
 
 namespace pnmc { namespace pn {
 
@@ -78,16 +80,35 @@ private:
   /// @brief The set of transitions.
   transitions_type transitions_;
 
-public:
-
-  /// @brief The unit that contains all other units.
-  unsigned int root_unit;
+  /// @brief The set of units.
+  std::set<const unit> units_;
 
   /// @brief The initially marked place.
-  unsigned int initial_place;
+  const unsigned int initial_place_;
+
+  /// @brief The unit that contains all other units.
+  const unsigned int root_unit_;
+
+public:
 
   /// @brief Default constructor.
-  net();
+  net(unsigned int initial_place, unsigned int root_unit);
+
+  /// @brief Get initial place.
+  unsigned int
+  initial_place() const noexcept;
+
+  /// @brief Get root unit.
+  unsigned int
+  root_unit() const noexcept;
+
+  /// @brief Return all units.
+  const std::set<const unit>&
+  units() const noexcept;
+
+  /// @brief Return all units.
+  std::set<const unit>&
+  units() noexcept;
 
   /// @brief Add a place.
   const place&

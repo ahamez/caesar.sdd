@@ -1,9 +1,11 @@
 #include <algorithm> // any_of
 #include <iostream>
+#include <map>
 #include <string>
 
 #include "parsers/bpn.hh"
 #include "parsers/parse_error.hh"
+#include "pn/unit.hh"
 
 namespace pnmc { namespace parsers {
 
@@ -287,6 +289,38 @@ struct prefix
   }
 };
 
+/*------------------------------------------------------------------------------------------------*/
+
+using id_to_subids_type = std::map<unsigned int, std::vector<unsigned int>>;
+using id_to_places_type
+  = std::map<unsigned int, std::vector<std::reference_wrapper<const pn::place>>>;
+
+const pn::unit&
+unit_builder( std::set<const pn::unit>& res
+            , unsigned int id, const id_to_subids_type& id_to_subids
+            , const id_to_places_type& id_to_places)
+{
+  std::vector<std::reference_wrapper<const pn::unit>> units;
+  for (const auto id : id_to_subids.find(id)->second)
+  {
+    units.emplace_back(unit_builder(res, id, id_to_subids, id_to_places));
+  }
+
+  std::vector<std::reference_wrapper<const pn::place>>
+    places(std::move(id_to_places.find(id)->second));
+
+  return *res.emplace(id, std::move(places), std::move(units)).first;
+}
+
+std::set<const pn::unit>
+units_builder( unsigned int root, const id_to_subids_type& id_to_subids
+             , const id_to_places_type& id_to_places)
+{
+  std::set<const pn::unit> res;
+  unit_builder(res, root, id_to_subids, id_to_places);
+  return res;
+}
+
 } // namespace anonymous
 
 /*------------------------------------------------------------------------------------------------*/
@@ -294,40 +328,56 @@ struct prefix
 std::shared_ptr<pn::net>
 bpn(std::istream& in)
 {
-  auto net_ptr = std::make_shared<pn::net>();
-  auto& net = *net_ptr;
+  id_to_subids_type id_to_subids;
+  id_to_places_type id_to_places;
 
-  // temporary string placeholders
+  // temporary placeholders
   std::string s0, s1;
+  unsigned int ui0, ui1;
 
+  // The number of place. We don't need this information.
   in >> kw("places") >> sharp() >> interval();
-  in >> kw("initial") >> kw("place") >> uint(net.initial_place);
 
+  // The initial place.
+  in >> kw("initial") >> kw("place") >> uint(ui0);
+
+  // The number of units.
   unsigned int nb_units;
   in >> kw("units") >> sharp(nb_units) >> interval();
 
-  // units
-  in >> kw("root") >> kw("unit") >> uint(net.root_unit);
+  // The root unit.
+  in >> kw("root") >> kw("unit") >> uint(ui1);
 
+  // Create the Petri net.
+  auto net_ptr = std::make_shared<pn::net>(ui0, ui1);
+  auto& net = *net_ptr;
+
+  // Units
   for (; nb_units > 0; --nb_units)
   {
-    unsigned int unit_nb, nb_nested_units, first, last;
-    in >> prefix('U', unit_nb) >> sharp() >> interval(first, last) >> sharp(nb_nested_units);
+    unsigned int unit_id, nb_nested_units, first, last;
+    in >> prefix('U', unit_id) >> sharp() >> interval(first, last) >> sharp(nb_nested_units);
 
+    auto insertion1
+      = id_to_places.emplace(unit_id, std::vector<std::reference_wrapper<const pn::place>>());
+    // Places of this unit.
     for (unsigned int i = first; i <= last; ++i)
     {
-      net.add_place(i, 0, unit_nb);
+      const auto& place = net.add_place(i, 0, unit_id);
+      insertion1.first->second.emplace_back(place);
     }
 
-    // nested units
+    // Nested units.
+    auto insertion2 = id_to_subids.emplace(unit_id, std::vector<unsigned int>());
     for (unsigned int i = 0; i < nb_nested_units; ++i)
     {
-      unsigned int sub_unit;
-      in >> uint(sub_unit);
+      unsigned int sub_unit_id;
+      in >> uint(sub_unit_id);
+      insertion2.first->second.emplace_back(sub_unit_id);
     }
   }
 
-  // transitions
+  // Transitions
   unsigned int nb_transitions;
   in >> kw("transitions") >> sharp(nb_transitions) >> interval();
   for(; nb_transitions > 0; --nb_transitions)
@@ -337,7 +387,7 @@ bpn(std::istream& in)
     in >> prefix('T', transition_id) >> sharp(nb_places);
     net.add_transition(transition_id);
 
-    // input places
+    // Input places.
     for (; nb_places > 0; --nb_places)
     {
       unsigned int place_id;
@@ -345,7 +395,7 @@ bpn(std::istream& in)
       net.add_pre_place(transition_id, place_id, 1);
     }
 
-    // output places
+    // Output places.
     in >> sharp(nb_places);
     for (; nb_places > 0; --nb_places)
     {
@@ -356,7 +406,11 @@ bpn(std::istream& in)
   }
 
   // Set marking of initial place.
-  net.update_place(net.initial_place, 1);
+  net.update_place(net.initial_place(), 1);
+
+  std::set<const pn::unit> tmp;
+  units_builder(net.root_unit(), id_to_subids, id_to_places);
+  std::swap(net.units(), tmp);
 
   return net_ptr;
 }

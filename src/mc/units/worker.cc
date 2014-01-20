@@ -48,8 +48,9 @@ initial_state(const order& o, const pn::net& net)
   return SDD(o, [&](unsigned int unit)
                    -> flat_set
                    {
-                     return unit == net.root_unit ? flat_set({net.initial_place + 1})
-                                                  : flat_set({0});}
+                     return unit == net.root_unit() ? flat_set({net.initial_place() + 1})
+                                                    : flat_set({0});
+                   }
             );
 }
 
