@@ -312,15 +312,6 @@ unit_builder( std::set<const pn::unit>& res
   return *res.emplace(id, std::move(places), std::move(units)).first;
 }
 
-std::set<const pn::unit>
-units_builder( unsigned int root, const id_to_subids_type& id_to_subids
-             , const id_to_places_type& id_to_places)
-{
-  std::set<const pn::unit> res;
-  unit_builder(res, root, id_to_subids, id_to_places);
-  return res;
-}
-
 } // namespace anonymous
 
 /*------------------------------------------------------------------------------------------------*/
@@ -408,9 +399,8 @@ bpn(std::istream& in)
   // Set marking of initial place.
   net.update_place(net.initial_place(), 1);
 
-  std::set<const pn::unit> tmp;
-  units_builder(net.root_unit(), id_to_subids, id_to_places);
-  std::swap(net.units(), tmp);
+  // Create units.
+  unit_builder(net.units(), net.root_unit(), id_to_subids, id_to_places);
 
   return net_ptr;
 }
