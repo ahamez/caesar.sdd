@@ -23,11 +23,34 @@ noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
+namespace /* anonymous */ {
+
+void
+ostream_helper(std::ostream& os, const unit& u, unsigned int depth)
+{
+  const std::string indent(depth, ' ');
+  os << indent << "U" << u.id << " : ";
+  if (not u.places.empty())
+  {
+    std::for_each( u.places.begin(), std::prev(u.places.end())
+                 , [&](const place& p){os << p.id << ", ";});
+    os << std::prev(u.places.end())->get().id;;
+  }
+  os << std::endl;
+  for (const auto& sub : u.units)
+  {
+    ostream_helper(os, sub, depth + 2);
+  }
+}
+
+} // namespace anonymous
+
 /// Export a unit to an output stream.
 std::ostream&
 operator<<(std::ostream& os, const unit& u)
 {
-  return os << "u " << u.id;
+  ostream_helper(os, u, 0);
+  return os;
 }
 
 /*------------------------------------------------------------------------------------------------*/
