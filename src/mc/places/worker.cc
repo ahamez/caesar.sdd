@@ -12,7 +12,7 @@
 #include "mc/places/post_live.hh"
 #include "mc/places/pre.hh"
 #include "mc/places/sdd.hh"
-#include "mc/places/concurrent_units.hh"
+//#include "mc/places/concurrent_units.hh"
 #include "mc/places/worker.hh"
 
 namespace pnmc { namespace mc { namespace places {
@@ -197,7 +197,7 @@ const
 
   if (conf.compute_concurrent_units)
   {
-    compute_concurrent_units(conf, net, o, m);
+    std::cerr << "Unavailable in this mode" << std::endl;
   }
 
   if (conf.show_hash_tables_stats)
