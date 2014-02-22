@@ -95,9 +95,10 @@ const noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
-const std::set<const unit>&
+/// @brief Return all units.
+std::unordered_map<unsigned int, const unit>&
 net::units()
-const noexcept
+noexcept
 {
   return units_;
 }
@@ -105,9 +106,9 @@ const noexcept
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Return all units.
-std::set<const unit>&
+const std::unordered_map<unsigned int, const unit>&
 net::units()
-noexcept
+const noexcept
 {
   return units_;
 }
@@ -217,7 +218,25 @@ const
 
 /*------------------------------------------------------------------------------------------------*/
 
+bool
+net::units_are_related(unsigned int i, unsigned int j)
+const
 {
+  const auto i_search = units_.find(i);
+  const auto j_search = units_.find(j);
+  assert(i_search != units_.end());
+  assert(j_search != units_.end());
+  const auto& i_unit = i_search->second;
+  const auto& j_unit = j_search->second;
+  if (std::find(i_unit.path.cbegin(), i_unit.path.cend(), j) !=  i_unit.path.cend())
+  {
+    return true;
+  }
+  else if (std::find(j_unit.path.cbegin(), j_unit.path.cend(), i) != j_unit.path.cend())
+  {
+    return true;
+  }
+  return false;
 }
 
 /*------------------------------------------------------------------------------------------------*/

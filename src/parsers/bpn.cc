@@ -300,20 +300,26 @@ using units_maker_type = std::map< unsigned int
                                  >;
 
 const pn::unit&
-unit_builder( std::set<const pn::unit>& res
+unit_builder( std::unordered_map<unsigned int, const pn::unit>& res
             , unsigned int id
-             , units_maker_type& map )
+            , units_maker_type& map
+            , std::vector<unsigned int>& subunits)
 {
   std::vector<std::reference_wrapper<const pn::unit>> units;
+  std::vector<unsigned int> local_subnits;
+  subunits.push_back(id);
   const auto search = map.find(id);
   assert(search != map.end() && "Unit id not found.");
   auto& subids = std::get<0>(search->second);
   auto& places = std::get<1>(search->second);
   for (const auto id : subids)
   {
-    units.emplace_back(unit_builder(res, id, map));
+    units.emplace_back(unit_builder(res, id, map, local_subnits));
   }
-  return *res.emplace(id, std::move(places), std::move(units)).first;
+  subunits.insert(subunits.end(), local_subnits.cbegin(), local_subnits.cend());
+  return
+    res.emplace(id, pn::unit(id, std::move(places), std::move(units), std::move(local_subnits)))
+           .first->second;
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -409,7 +415,8 @@ bpn(std::istream& in)
   net.update_place(net.initial_place(), 1);
 
   // Create units.
-  unit_builder(net.units(), net.root_unit(), map);
+  std::vector<unsigned int> empty_vec;
+  unit_builder(net.units(), net.root_unit(), map, empty_vec);
 
   return net_ptr;
 }

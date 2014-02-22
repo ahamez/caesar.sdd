@@ -2,7 +2,7 @@
 #define _PNMC_PN_NET_HH_
 
 #include <functional> // reference_wrapper
-#include <set>
+#include <unordered_map>
 #include <vector>
 
 #pragma GCC diagnostic push
@@ -81,7 +81,7 @@ private:
   transitions_type transitions_;
 
   /// @brief The set of units.
-  std::set<const unit> units_;
+  std::unordered_map<unsigned int, const unit> units_;
 
   /// @brief The initially marked place.
   const unsigned int initial_place_;
@@ -103,12 +103,12 @@ public:
   root_unit() const noexcept;
 
   /// @brief Return all units.
-  const std::set<const unit>&
-  units() const noexcept;
+  std::unordered_map<unsigned int, const unit>&
+  units() noexcept;
 
   /// @brief Return all units.
-  std::set<const unit>&
-  units() noexcept;
+  const std::unordered_map<unsigned int, const unit>&
+  units() const noexcept;
 
   /// @brief Add a place.
   const place&
@@ -152,6 +152,9 @@ public:
   unsigned int
   unit_of_place(const place&) const;
 
+  /// @brief Tell if i contains j or if j contains i.
+  bool
+  units_are_related(unsigned int i, unsigned int j) const;
 
   /// @brief Return all transitions.
   const transitions_type::index<id_index>::type&

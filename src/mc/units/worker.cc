@@ -25,7 +25,7 @@ order
 mk_order(const pn::net& net)
 {
   std::vector<unsigned int> units;
-  units.reserve(net.units_size());
+  units.reserve(net.units().size());
   for (const auto& p : net.places())
   {
     if (not net.places_of_unit(p.unit).empty())
