@@ -152,9 +152,6 @@ public:
   unsigned int
   unit_of_place(const place&) const;
 
-  /// @brief Return the number of units.
-  std::size_t
-  units_size() const noexcept;
 
   /// @brief Return all transitions.
   const transitions_type::index<id_index>::type&

@@ -41,7 +41,7 @@ compute_concurrent_units( const conf::pnmc_configuration& conf, const pn::net& n
   namespace chrono = std::chrono;
   chrono::time_point<chrono::system_clock> start = chrono::system_clock::now();
 
-  const auto nb_units = net.units_size();
+  const auto nb_units = net.units().size();
   unsigned int j_end = 1;
   for (unsigned int i = 0; i < nb_units; ++i, ++j_end)
   {

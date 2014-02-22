@@ -217,12 +217,7 @@ const
 
 /*------------------------------------------------------------------------------------------------*/
 
-std::size_t
-net::units_size()
-const noexcept
 {
-  const auto& places = places_.get<unit_index>();
-  return places.empty() ? 0 : std::prev(places_.get<unit_index>().end())->unit + 1;
 }
 
 /*------------------------------------------------------------------------------------------------*/
