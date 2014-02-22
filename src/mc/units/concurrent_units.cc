@@ -119,7 +119,7 @@ struct query_visitor
 
   bool
   operator()(const sdd::flat_node<sdd_conf>& node, const order& o)
-  const noexcept
+  const
   {
     const auto insertion = cache.emplace(&node);
     if (insertion.second)
