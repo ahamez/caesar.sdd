@@ -121,7 +121,7 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
   }
 
   start = chrono::system_clock::now();
-  const auto res = sdd::rewrite(Fixpoint(Sum<sdd_conf>(o, operands.cbegin(), operands.cend())), o);
+  const auto res = sdd::rewrite(o, Fixpoint(Sum<sdd_conf>(o, operands.cbegin(), operands.cend())));
   end = chrono::system_clock::now();
   elapsed = chrono::duration_cast<chrono::seconds>(end-start).count();
 
@@ -184,8 +184,7 @@ const
 
   if (conf.show_nb_states)
   {
-    const auto n = sdd::count_combinations(m);
-    std::cout << n.template convert_to<long double>() << " states" << std::endl;
+    std::cout << m.size().template convert_to<long double>() << " states" << std::endl;
   }
 
   if (conf.compute_dead_transitions)
