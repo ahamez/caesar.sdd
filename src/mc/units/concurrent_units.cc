@@ -89,10 +89,11 @@ struct query_visitor
             , InputIterator i_units_cit, InputIterator j_units_cit, bool i_active, bool j_active)
   const
   {
-    assert(i_active ? not j_active : true);
-    assert(j_active ? not i_active : true);
+    assert((i_active ? not j_active : true) and (j_active ? not i_active : true));
+
     const auto insertion = cache.emplace(&node, active(false, false));
     auto& cache_result = insertion.first->second;
+
     if (insertion.second) // It's the first time that we see this node.
     {
       if (i_active) // only i or its subunits are active
@@ -108,11 +109,11 @@ struct query_visitor
             }
             else // j is not active at this level
             {
-              const auto res = visit( *this, arc.successor(), o.next()
-                                    , i_units_end, ++j_units_cit, true, false);
-              if (res.all())
+              cache_result = visit( *this, arc.successor(), o.next()
+                                  , i_units_end, ++j_units_cit, true, false);
+              if (cache_result.all())
               {
-                return res;
+                return cache_result;
               }
             }
           }
@@ -121,17 +122,16 @@ struct query_visitor
         {
           for (const auto& arc : node)
           {
-            const auto res = visit( *this, arc.successor(), o.next()
-                                  , i_units_end, j_units_cit, true, false);
-            if (res.all())
+            cache_result = visit( *this, arc.successor(), o.next()
+                                , i_units_end, j_units_cit, true, false);
+            if (cache_result.all())
             {
-              return res;
+              return cache_result;
             }
           }
         }
-        // If we come here, then i (or its subunits) is active, but not j (or its subunits).
-        cache_result = active(true, false);
       }
+      /* --------------- */
       else if (j_active)  // only j or its subunits are active
       {
         assert(j_units_cit == j_units_end);
@@ -145,11 +145,11 @@ struct query_visitor
             }
             else // i is not active at this level
             {
-              const auto res = visit( *this, arc.successor(), o.next()
-                                     , ++i_units_cit, j_units_end, false, true);
-              if (res.all())
+              cache_result = visit( *this, arc.successor(), o.next()
+                                  , ++i_units_cit, j_units_end, false, true);
+              if (cache_result.all())
               {
-                return res;
+                return cache_result;
               }
             }
           }
@@ -158,17 +158,16 @@ struct query_visitor
         {
           for (const auto& arc : node)
           {
-            const auto res = visit( *this, arc.successor(), o.next()
-                                   , i_units_cit, j_units_end, false, true);
-            if (res.all())
+            cache_result = visit( *this, arc.successor(), o.next()
+                                , i_units_cit, j_units_end, false, true);
+            if (cache_result.all())
             {
-              return res;
+              return cache_result;
             }
           }
         }
-        // If we come here, then j (or its subunits) is active, but not i (or its subunits).
-        cache_result = active(false, true);
       }
+      /* --------------- */
       else // neither i (or its subunits) nor j (or its subunits) are active
       {
         if (on(i_units_cit, i_units_end, o)) // on i or its subunits
@@ -177,23 +176,21 @@ struct query_visitor
           {
             if (arc.valuation() != inactive_unit) // i is active
             {
-              const auto res = visit( *this, arc.successor(), o.next()
-                                    , i_units_end, j_units_cit, true, false);
-              if (res.all())
+              cache_result = visit( *this, arc.successor(), o.next()
+                                  , i_units_end, j_units_cit, true, false);
+              if (cache_result.all())
               {
-                return res;
+                return cache_result;
               }
-              cache_result = active(true, false);
             }
             else // i is not active at this level
             {
-              const auto res = visit( *this, arc.successor(), o.next()
-                                     , ++i_units_cit, j_units_cit, false, false);
-              if (res.all())
+              cache_result = visit( *this, arc.successor(), o.next()
+                                  , ++i_units_cit, j_units_cit, false, false);
+              if (cache_result.all())
               {
-                return res;
+                return cache_result;
               }
-              cache_result = active(res.i, res.j);
             }
           }
         }
@@ -203,23 +200,21 @@ struct query_visitor
           {
             if (arc.valuation() != inactive_unit) // j is active
             {
-              const auto res = visit( *this, arc.successor(), o.next()
-                                    , i_units_cit, j_units_end, false, true);
-              if (res.all())
+              cache_result = visit( *this, arc.successor(), o.next()
+                                  , i_units_cit, j_units_end, false, true);
+              if (cache_result.all())
               {
-                return res;
+                return cache_result;
               }
-              cache_result = active(false, true);
             }
             else // j is not active at this level
             {
-              const auto res = visit( *this, arc.successor(), o.next()
-                                    , i_units_cit, ++j_units_cit, false, false);
-              if (res.all())
+              cache_result = visit( *this, arc.successor(), o.next()
+                                  , i_units_cit, ++j_units_cit, false, false);
+              if (cache_result.all())
               {
-                return res;
+                return cache_result;
               }
-              cache_result = active(res.i, res.j);
             }
           }
         }
@@ -227,13 +222,12 @@ struct query_visitor
         {
           for (const auto& arc : node)
           {
-            const auto res = visit( *this, arc.successor(), o.next()
-                                  , i_units_cit, j_units_cit, false, false);
-            if (res.all())
+            cache_result = visit( *this, arc.successor(), o.next()
+                                , i_units_cit, j_units_cit, false, false);
+            if (cache_result.all())
             {
-              return res;
+              return cache_result;
             }
-            cache_result = active(res.i, res.j);
           }
         }
       }
