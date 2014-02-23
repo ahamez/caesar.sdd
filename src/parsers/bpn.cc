@@ -358,8 +358,9 @@ bpn(std::istream& in)
   // Units
   for (; nb_units > 0; --nb_units)
   {
-    unsigned int unit_id, nb_nested_units, first, last;
-    in >> prefix('U', unit_id) >> sharp() >> interval(first, last) >> sharp(nb_nested_units);
+    unsigned int unit_id, nb_nested_units, first, last, nb_places;
+    in >> prefix('U', unit_id) >> sharp(nb_places) >> interval(first, last)
+       >> sharp(nb_nested_units);
 
     auto insertion
       = map.emplace( unit_id
@@ -369,10 +370,13 @@ bpn(std::istream& in)
     auto& places = std::get<1>(insertion.first->second);
 
     // Places of this unit.
-    for (unsigned int i = first; i <= last; ++i)
+    if (nb_places > 0)
     {
-      const auto& place = net.add_place(i, 0, unit_id);
-      places.emplace_back(place);
+      for (unsigned int i = first; i <= last; ++i)
+      {
+        const auto& place = net.add_place(i, 0, unit_id);
+        places.emplace_back(place);
+      }
     }
 
     // Nested units.
