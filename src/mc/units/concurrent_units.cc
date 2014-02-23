@@ -1,4 +1,4 @@
-#include <algorithm> // sort
+#include <algorithm> // copy_if, sort
 #include <chrono>
 #include <ostream>
 #include <unordered_map>
@@ -251,11 +251,21 @@ query(const pn::net& net, SDD states, const order& o, unsigned int i, unsigned i
   const auto& i_unit = i_search->second;
   const auto& j_unit = j_search->second;
 
-  std::vector<unsigned int> i_units(i_unit.subunits.cbegin(), i_unit.subunits.cend());
+  const auto pred = [&net](unsigned int id){return not net.places_of_unit(id).empty();};
+
+  // Copy all subunits of j and i itself
+  std::vector<unsigned int> i_units;
+  i_units.reserve(i_unit.subunits.size() + 1);
+  std::copy_if(i_unit.subunits.cbegin(), i_unit.subunits.cend(), std::back_inserter(i_units), pred);
   i_units.push_back(i);
-  std::vector<unsigned int> j_units(j_unit.subunits.cbegin(), j_unit.subunits.cend());
+
+  // Copy all subunits of j and j itself.
+  std::vector<unsigned int> j_units;
+  j_units.reserve(j_unit.subunits.size() + 1);
+  std::copy_if(j_unit.subunits.cbegin(), j_unit.subunits.cend(), std::back_inserter(j_units), pred);
   j_units.push_back(j);
 
+  // Sort unit ids by their order of apparition in the SDD.
   const auto comp = [&o](unsigned int lhs, unsigned int rhs){return o.node(lhs) < o.node(rhs);};
   std::sort(i_units.begin(), i_units.end(), comp);
   std::sort(j_units.begin(), j_units.end(), comp);
