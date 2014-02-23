@@ -93,7 +93,7 @@ struct query_visitor
       if (i_active) // only i or its subunits are active
       {
         assert(i_units_cit == i_units_end);
-        if (on(j_units_cit, o)) // on j or its subunits
+        if (on(j_units_cit, o, j_units_end)) // on j or its subunits
         {
           for (const auto& arc : node)
           {
@@ -129,7 +129,7 @@ struct query_visitor
       else if (j_active)  // only j or its subunits are active
       {
         assert(j_units_cit == j_units_end);
-        if (on(i_units_cit, o)) // on i or its subunits
+        if (on(i_units_cit, o, i_units_end)) // on i or its subunits
         {
           for (const auto& arc : node)
           {
@@ -164,7 +164,12 @@ struct query_visitor
       /* --------------- */
       else // neither i (or its subunits) nor j (or its subunits) are active
       {
-        if (on(i_units_cit, o)) // on i or its subunits
+        if (i_units_cit == i_units_end or j_units_cit == j_units_end)
+        {
+          return active(false, false);
+        }
+
+        if (on(i_units_cit, o, i_units_end)) // on i or its subunits
         {
           for (const auto& arc : node)
           {
@@ -188,7 +193,7 @@ struct query_visitor
             }
           }
         }
-        else if (on(j_units_cit, o))
+        else if (on(j_units_cit, o, j_units_end))
         {
           for (const auto& arc : node)
           {
@@ -232,8 +237,9 @@ struct query_visitor
 
   static
   bool
-  on(InputIterator cit, const order& o)
+  on(InputIterator cit, const order& o, InputIterator end)
   {
+    assert(cit != end);
     // Units identifiers are sorted by their order of apparition in the SDD.
     // So we can safely check the head of units identifiers.
     return o.identifier().user() == *cit;
