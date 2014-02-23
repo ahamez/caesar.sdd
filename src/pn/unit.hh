@@ -24,24 +24,14 @@ struct unit
   const std::vector<std::reference_wrapper<const unit>> units;
 
   ///
-  const std::vector<unsigned int> path;
+  const std::vector<unsigned int> subunits;
 
   /// @brief Constructor.
   unit( unsigned int id
       , std::vector<std::reference_wrapper<const place>>&& places
       , std::vector<std::reference_wrapper<const unit>>&& units
-      , std::vector<unsigned int>&& path);
-
-  /// @brief Tell if this unit contains another unit.
-  bool
-  is_subunit_of(unsigned int) const;
+      , std::vector<unsigned int>&& subunits);
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @brief Compare two units.
-bool
-operator<(const unit&, const unit&) noexcept;
 
 /*------------------------------------------------------------------------------------------------*/
 

@@ -228,11 +228,11 @@ const
   assert(j_search != units_.end());
   const auto& i_unit = i_search->second;
   const auto& j_unit = j_search->second;
-  if (std::find(i_unit.path.cbegin(), i_unit.path.cend(), j) !=  i_unit.path.cend())
+  if (std::find(i_unit.subunits.cbegin(), i_unit.subunits.cend(), j) !=  i_unit.subunits.cend())
   {
     return true;
   }
-  else if (std::find(j_unit.path.cbegin(), j_unit.path.cend(), i) != j_unit.path.cend())
+  else if (std::find(j_unit.subunits.cbegin(), j_unit.subunits.cend(), i) != j_unit.subunits.cend())
   {
     return true;
   }

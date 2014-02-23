@@ -10,28 +10,9 @@ namespace pnmc { namespace pn {
 unit::unit( unsigned int id
           , std::vector<std::reference_wrapper<const place>>&& places
           , std::vector<std::reference_wrapper<const unit>>&& units
-          , std::vector<unsigned int>&& path)
-  : id(id), places(std::move(places)), units(std::move(units)), path(std::move(path))
+          , std::vector<unsigned int>&& subunits)
+  : id(id), places(std::move(places)), units(std::move(units)), subunits(std::move(subunits))
 {}
-
-
-/*------------------------------------------------------------------------------------------------*/
-
-bool
-unit::is_subunit_of(unsigned int id)
-const
-{
-  return std::find(path.begin(), path.end(), id) != path.end();
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-bool
-operator<(const unit& left, const unit& right)
-noexcept
-{
-  return left.id < right.id;
-}
 
 /*------------------------------------------------------------------------------------------------*/
 
