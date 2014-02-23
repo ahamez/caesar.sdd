@@ -25,13 +25,6 @@ struct active
   {}
 
   bool
-  operator==(const active& other)
-  const
-  {
-    return i == other.i and j == other.j;
-  }
-
-  bool
   all()
   const
   {
