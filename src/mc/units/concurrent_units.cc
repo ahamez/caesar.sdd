@@ -1,6 +1,9 @@
+#include <algorithm> // sort
 #include <chrono>
 #include <ostream>
-#include <unordered_set>
+#include <unordered_map>
+#include <utility>  //pair
+#include <vector>
 
 #include <sdd/values/bitset.hh>
 
@@ -12,158 +15,268 @@ namespace pnmc { namespace mc { namespace units {
 
 namespace /* anonymous */{
 
-struct nested_query_visitor
+struct active
 {
-  using result_type = bool;
+  bool i;
+  bool j;
 
-  const sdd::values::flat_set<unsigned int>& empty;
-  const unsigned int j;
-  mutable std::unordered_set<const sdd::flat_node<sdd_conf>*> cache;
-
-  nested_query_visitor(const sdd::values::flat_set<unsigned int>& empty, unsigned int j)
-    : empty(empty), j(j), cache()
+  active(bool i, bool j)
+    : i(i), j(j)
   {}
 
   bool
-  operator()(const sdd::zero_terminal<sdd_conf>&, const order&)
-  const noexcept
+  operator==(const active& other)
+  const
   {
-    assert(false && "|0|");
-    __builtin_unreachable();
+    return i == other.i and j == other.j;
   }
 
   bool
-  operator()(const sdd::one_terminal<sdd_conf>&, const order&)
-  const noexcept
+  all()
+  const
   {
-    assert(false && "|1|");
-    __builtin_unreachable();
-  }
-
-  bool
-  operator()(const sdd::hierarchical_node<sdd_conf>&, const order&)
-  const noexcept
-  {
-    assert(false && "Hierarchy");
-    __builtin_unreachable();
-  }
-
-  bool
-  operator()(const sdd::flat_node<sdd_conf>& node, const order& o)
-  const noexcept
-  {
-    const auto insertion = cache.emplace(&node);
-    if (insertion.second)
-    {
-      if (o.identifier().user() == j)
-      {
-        for (const auto& arc : node)
-        {
-          if (arc.valuation() != empty)
-          {
-            return true;
-          }
-        }
-      }
-      else
-      {
-        for (const auto& arc : node)
-        {
-          if (visit(*this, arc.successor(), o.next()))
-          {
-            return true;
-          }
-        }
-      }
-    }
-    return false;
+    return i and j;
   }
 };
 
+template <typename InputIterator>
 struct query_visitor
 {
-  using result_type = bool;
+  using result_type = active;
 
-  const sdd::values::flat_set<unsigned int>& empty;
-  const unsigned int i;
-  const unsigned int j;
-  mutable std::unordered_set<const sdd::flat_node<sdd_conf>*> cache;
+  const sdd::values::flat_set<unsigned int>& inactive_unit;
 
-  query_visitor(const sdd::values::flat_set<unsigned int>& empty, unsigned int i, unsigned int j)
-    : empty(empty), i(i), j(j), cache()
+  const InputIterator i_units_end;
+  const InputIterator j_units_end;
+
+  mutable std::unordered_map<const sdd::flat_node<sdd_conf>*, active> cache;
+
+  query_visitor( const sdd::values::flat_set<unsigned int>& empty
+               , InputIterator i_units_end, InputIterator j_units_end)
+    : inactive_unit(empty)
+    , i_units_end(i_units_end), j_units_end(j_units_end)
+    , cache()
   {}
 
-  bool
-  operator()(const sdd::zero_terminal<sdd_conf>&, const order&)
+  result_type
+  operator()( const sdd::zero_terminal<sdd_conf>&, const order&
+            , InputIterator, InputIterator, bool, bool)
   const noexcept
   {
     assert(false && "|0|");
     __builtin_unreachable();
   }
 
-  bool
-  operator()(const sdd::one_terminal<sdd_conf>&, const order&)
+  result_type
+  operator()( const sdd::one_terminal<sdd_conf>&, const order&
+            , InputIterator, InputIterator, bool, bool)
   const noexcept
   {
-    assert(false && "|1|");
-    __builtin_unreachable();
+    return active(false, false);
   }
 
-  bool
-  operator()(const sdd::hierarchical_node<sdd_conf>&, const order&)
+  result_type
+  operator()( const sdd::hierarchical_node<sdd_conf>&, const order&
+            , InputIterator, InputIterator, bool, bool)
   const noexcept
   {
     assert(false && "Hierarchy");
     __builtin_unreachable();
   }
 
-  bool
-  operator()(const sdd::flat_node<sdd_conf>& node, const order& o)
+  result_type
+  operator()( const sdd::flat_node<sdd_conf>& node, const order& o
+            , InputIterator i_units_cit, InputIterator j_units_cit, bool i_active, bool j_active)
   const
   {
-    const auto insertion = cache.emplace(&node);
-    if (insertion.second)
+    assert(i_active ? not j_active : true);
+    assert(j_active ? not i_active : true);
+    const auto insertion = cache.emplace(&node, active(false, false));
+    auto& cache_result = insertion.first->second;
+    if (insertion.second) // It's the first time that we see this node.
     {
-      if (o.identifier().user() == i)
+      if (i_active) // only i or its subunits are active
       {
-        for (const auto& arc : node)
+        assert(i_units_cit == i_units_end);
+        if (on(j_units_cit, j_units_end, o)) // on j or its subunits
         {
-          if (arc.valuation() != empty)
+          for (const auto& arc : node)
           {
-            if (visit(nested_query_visitor(empty, j), arc.successor(), o.next()))
+            if (arc.valuation() != inactive_unit) // j is active
             {
-              return true;
+              return active(true, true);
+            }
+            else // j is not active at this level
+            {
+              const auto res = visit( *this, arc.successor(), o.next()
+                                    , i_units_end, ++j_units_cit, true, false);
+              if (res.all())
+              {
+                return res;
+              }
             }
           }
         }
-      }
-      else
-      {
-        for (const auto& arc : node)
+        else // not on j or its subunits
         {
-          if (visit(*this, arc.successor(), o.next()))
+          for (const auto& arc : node)
           {
-            return true;
+            const auto res = visit( *this, arc.successor(), o.next()
+                                  , i_units_end, j_units_cit, true, false);
+            if (res.all())
+            {
+              return res;
+            }
+          }
+        }
+        // If we come here, then i (or its subunits) is active, but not j (or its subunits).
+        cache_result = active(true, false);
+      }
+      else if (j_active)  // only j or its subunits are active
+      {
+        assert(j_units_cit == j_units_end);
+        if (on(i_units_cit, i_units_end, o)) // on i or its subunits
+        {
+          for (const auto& arc : node)
+          {
+            if (arc.valuation() != inactive_unit) // j is active
+            {
+              return active(true, true);
+            }
+            else // i is not active at this level
+            {
+              const auto res = visit( *this, arc.successor(), o.next()
+                                     , ++i_units_cit, j_units_end, false, true);
+              if (res.all())
+              {
+                return res;
+              }
+            }
+          }
+        }
+        else // not on i or its subunits
+        {
+          for (const auto& arc : node)
+          {
+            const auto res = visit( *this, arc.successor(), o.next()
+                                   , i_units_cit, j_units_end, false, true);
+            if (res.all())
+            {
+              return res;
+            }
+          }
+        }
+        // If we come here, then j (or its subunits) is active, but not i (or its subunits).
+        cache_result = active(false, true);
+      }
+      else // neither i (or its subunits) nor j (or its subunits) are active
+      {
+        if (on(i_units_cit, i_units_end, o)) // on i or its subunits
+        {
+          for (const auto& arc : node)
+          {
+            if (arc.valuation() != inactive_unit) // i is active
+            {
+              const auto res = visit( *this, arc.successor(), o.next()
+                                    , i_units_end, j_units_cit, true, false);
+              if (res.all())
+              {
+                return res;
+              }
+              cache_result = active(true, false);
+            }
+            else // i is not active at this level
+            {
+              const auto res = visit( *this, arc.successor(), o.next()
+                                     , ++i_units_cit, j_units_cit, false, false);
+              if (res.all())
+              {
+                return res;
+              }
+              cache_result = active(res.i, res.j);
+            }
+          }
+        }
+        else if (on(j_units_cit, j_units_end, o))
+        {
+          for (const auto& arc : node)
+          {
+            if (arc.valuation() != inactive_unit) // j is active
+            {
+              const auto res = visit( *this, arc.successor(), o.next()
+                                    , i_units_cit, j_units_end, false, true);
+              if (res.all())
+              {
+                return res;
+              }
+              cache_result = active(false, true);
+            }
+            else // j is not active at this level
+            {
+              const auto res = visit( *this, arc.successor(), o.next()
+                                    , i_units_cit, ++j_units_cit, false, false);
+              if (res.all())
+              {
+                return res;
+              }
+              cache_result = active(res.i, res.j);
+            }
+          }
+        }
+        else // neither on i (or its subunits) nor j (or its subunits)
+        {
+          for (const auto& arc : node)
+          {
+            const auto res = visit( *this, arc.successor(), o.next()
+                                  , i_units_cit, j_units_cit, false, false);
+            if (res.all())
+            {
+              return res;
+            }
+            cache_result = active(res.i, res.j);
           }
         }
       }
     }
-    return false;
+    // Cache hit or not, the result is now in the cache.
+    return cache_result;
+  }
+
+  static
+  bool
+  on(InputIterator cit, InputIterator end, const order& o)
+  {
+    return std::find(cit, end, o.identifier().user()) != end;
   }
 };
 
 bool
-query(SDD states, const order& o, unsigned int i, unsigned int j)
+query(const pn::net& net, SDD states, const order& o, unsigned int i, unsigned int j)
 {
   const sdd::values::flat_set<unsigned int> empty_unit = {0};
-  if (o.node(i) < o.node(j)) // does 'i' is before 'j' in the order?
-  {
-    return visit(query_visitor(empty_unit, i, j), states, o);
-  }
-  else
-  {
-    return visit(query_visitor(empty_unit, j, i), states, o);
-  }
+
+  const auto i_search = net.units().find(i);
+  const auto j_search = net.units().find(j);
+  assert(i_search != net.units().end());
+  assert(j_search != net.units().end());
+  const auto& i_unit = i_search->second;
+  const auto& j_unit = j_search->second;
+
+  std::vector<unsigned int> i_units(i_unit.subunits.cbegin(), i_unit.subunits.cend());
+  i_units.push_back(i);
+  std::vector<unsigned int> j_units(j_unit.subunits.cbegin(), j_unit.subunits.cend());
+  j_units.push_back(j);
+
+  const auto comp = [&o](unsigned int lhs, unsigned int rhs){return o.node(lhs) < o.node(rhs);};
+  std::sort(i_units.begin(), i_units.end(), comp);
+  std::sort(j_units.begin(), j_units.end(), comp);
+
+  const auto res
+    = visit( query_visitor<std::vector<unsigned int>::const_iterator>
+               (empty_unit, i_units.cend(), j_units.cend())
+           , states, o, i_units.cbegin(), j_units.cbegin(), false, false);
+
+  return res.i and res.j;
 }
 
 } // namespace anonymous
@@ -190,10 +303,10 @@ compute_concurrent_units( const conf::pnmc_configuration& conf, const pn::net& n
       }
       else
       {
-        std::cout << (query(states, o, i, j) ? "1 " : "0 ");
+        std::cout << (query(net, states, o, i, j) ? "1 " : "0 ");
       }
     }
-    std::cout << "\n";
+    std::cout << std::endl;
   }
 
   chrono::time_point<chrono::system_clock> end = chrono::system_clock::now();
