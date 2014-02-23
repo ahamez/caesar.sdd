@@ -3,6 +3,7 @@
 #include <deque>
 #include <iostream>
 #include <set>
+#include <unordered_set>
 #include <utility> // pair
 
 #include <boost/dynamic_bitset.hpp>
@@ -26,16 +27,23 @@ mk_order(const pn::net& net)
 {
   std::vector<unsigned int> units;
   units.reserve(net.units().size());
+
+  std::unordered_set<unsigned int> units_added;
+  units_added.reserve(net.units().size());
+
+  // Iteration on places because we want to put units in the same order as the places they
+  // contain.
   for (const auto& p : net.places())
   {
-    if (not net.places_of_unit(p.unit).empty())
+    if (not net.places_of_unit(p.unit).empty()) // Don't add empty units.
     {
-      if (units.empty() or units.back() != p.unit)
+      if (units_added.emplace(p.unit).second) // Check if units has already been added.
       {
         units.push_back(p.unit);
       }
     }
   }
+
   return {order_builder(units.begin(), units.end())};
 }
 
