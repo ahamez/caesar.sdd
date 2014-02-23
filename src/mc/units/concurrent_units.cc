@@ -62,10 +62,11 @@ struct query_visitor
 
   result_type
   operator()( const sdd::one_terminal<sdd_conf>&, const order&
-            , InputIterator, InputIterator, bool, bool)
+            , InputIterator, InputIterator, bool i_active, bool j_active)
   const noexcept
   {
-    return active(false, false);
+    assert((i_active ? not j_active : true) and (j_active ? not i_active : true));
+    return active(i_active, j_active);
   }
 
   result_type
