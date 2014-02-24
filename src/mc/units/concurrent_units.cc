@@ -98,7 +98,7 @@ struct query_visitor
           return active(true, false);
         }
 
-        if (on(j_units_cit, o, j_units_end)) // on j or its subunits
+        if (on(j_units_cit, o)) // on j or its subunits
         {
           for (const auto& arc : node)
           {
@@ -139,7 +139,7 @@ struct query_visitor
           return active(false, true);
         }
 
-        if (on(i_units_cit, o, i_units_end)) // on i or its subunits
+        if (on(i_units_cit, o)) // on i or its subunits
         {
           for (const auto& arc : node)
           {
@@ -179,7 +179,7 @@ struct query_visitor
           return active(false, false);
         }
 
-        if (on(i_units_cit, o, i_units_end)) // on i or its subunits
+        if (on(i_units_cit, o)) // on i or its subunits
         {
           for (const auto& arc : node)
           {
@@ -203,7 +203,7 @@ struct query_visitor
             }
           }
         }
-        else if (on(j_units_cit, o, j_units_end))
+        else if (on(j_units_cit, o))
         {
           for (const auto& arc : node)
           {
@@ -247,9 +247,8 @@ struct query_visitor
 
   static
   bool
-  on(InputIterator cit, const order& o, InputIterator end)
+  on(InputIterator cit, const order& o)
   {
-    assert(cit != end);
     // Units identifiers are sorted by their order of apparition in the SDD.
     // So we can safely check the head of units identifiers.
     return o.identifier().user() == *cit;
