@@ -56,7 +56,7 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
 
   start = chrono::system_clock::now();
   std::set<homomorphism> operands;
-  operands.insert(Id<sdd_conf>());
+  operands.insert(id<sdd_conf>());
 
   // When computing dead transitions, we need to start numbering them from 0 as we use this
   // value as an index in the bitset.
@@ -64,7 +64,7 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
 
   for (const auto& transition : net.transitions())
   {
-    homomorphism h_t = Id<sdd_conf>();
+    homomorphism h_t = id<sdd_conf>();
 
     if (transition.post.empty() and transition.pre.empty() and conf.compute_dead_transitions)
     {
@@ -77,19 +77,19 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
       auto arc_cit = transition.post.begin();
       if (conf.compute_dead_transitions)
       {
-        const auto f = ValuesFunction<sdd_conf>( o, arc_cit->first
+        const auto f = function( o, arc_cit->first
                                                , post_live(tindex++, transitions_bitset));
-        h_t = Composition(h_t, sdd::carrier(o, arc_cit->first, f));
+        h_t = composition(h_t, sdd::carrier(o, arc_cit->first, f));
       }
       else
       {
-        homomorphism f = ValuesFunction<sdd_conf>(o, arc_cit->first, post());
-        h_t = Composition(h_t, sdd::carrier(o, arc_cit->first, f));
+        homomorphism f = function(o, arc_cit->first, post());
+        h_t = composition(h_t, sdd::carrier(o, arc_cit->first, f));
       }
       for (++arc_cit; arc_cit != transition.post.end(); ++arc_cit)
       {
-        homomorphism f = ValuesFunction<sdd_conf>(o, arc_cit->first, post());
-        h_t = Composition(h_t, sdd::carrier(o, arc_cit->first, f));
+        homomorphism f = function(o, arc_cit->first, post());
+        h_t = composition(h_t, sdd::carrier(o, arc_cit->first, f));
       }
     }
     else if (conf.compute_dead_transitions)
@@ -97,17 +97,15 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
       // Target the same variable as the pre that is fired just before this fake post.
       const auto place = transition.pre.begin()->first;
 
-      const auto f
-        = ValuesFunction<sdd_conf>( o, place
-                                  , nopost_live(tindex++, transitions_bitset));
-      h_t = Composition(h_t, sdd::carrier(o, place, f));
+      const auto f = function(o, place, nopost_live(tindex++, transitions_bitset));
+      h_t = composition(h_t, sdd::carrier(o, place, f));
     }
 
     // pre actions.
     for (const auto& arc : transition.pre)
     {
-      homomorphism f = ValuesFunction<sdd_conf>(o, arc.first, pre());
-      h_t = Composition(h_t, sdd::carrier(o, arc.first, f));
+      homomorphism f = function(o, arc.first, pre());
+      h_t = composition(h_t, sdd::carrier(o, arc.first, f));
     }
 
     operands.insert(h_t);
@@ -121,7 +119,7 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
   }
 
   start = chrono::system_clock::now();
-  const auto res = sdd::rewrite(o, Fixpoint(Sum<sdd_conf>(o, operands.cbegin(), operands.cend())));
+  const auto res = sdd::rewrite(o, fixpoint(sum(o, operands.cbegin(), operands.cend())));
   end = chrono::system_clock::now();
   elapsed = chrono::duration_cast<chrono::seconds>(end-start).count();
 
@@ -200,10 +198,10 @@ const
     std::cerr << "Unavailable in this mode" << std::endl;
   }
 
-  if (conf.show_hash_tables_stats)
-  {
-    std::cout << manager << std::endl;
-  }
+//  if (conf.show_hash_tables_stats)
+//  {
+//    std::cout << manager << std::endl;
+//  }
 }
 
 /*------------------------------------------------------------------------------------------------*/
