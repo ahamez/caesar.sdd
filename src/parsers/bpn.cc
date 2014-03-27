@@ -363,7 +363,6 @@ bpn(std::istream& in)
   {
     unsigned int u;
     in >> uint(u);
-    std::cout << "Add initial place " << u << std::endl;
     initial_places.push_back(u);
   }
 
