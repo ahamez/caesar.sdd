@@ -84,7 +84,7 @@ private:
   std::unordered_map<unsigned int, const unit> units_;
 
   /// @brief The initially marked place.
-  const unsigned int initial_place_;
+  const std::vector<unsigned int> initial_places_;
 
   /// @brief The unit that contains all other units.
   const unsigned int root_unit_;
@@ -92,11 +92,11 @@ private:
 public:
 
   /// @brief Default constructor.
-  net(unsigned int initial_place, unsigned int root_unit);
+  net(std::vector<unsigned int>&& initial_places, unsigned int root_unit);
 
-  /// @brief Get initial place.
-  unsigned int
-  initial_place() const noexcept;
+  /// @brief Get initial places.
+  const std::vector<unsigned int>&
+  initial_places() const noexcept;
 
   /// @brief Get root unit.
   unsigned int

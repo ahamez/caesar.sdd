@@ -71,17 +71,17 @@ struct update_place_helper
 
 /*------------------------------------------------------------------------------------------------*/
 
-net::net(unsigned int p, unsigned int r)
-  : places_(), transitions_(), units_(), initial_place_(p), root_unit_(r)
+net::net(std::vector<unsigned int>&& initial_places, unsigned int r)
+  : places_(), transitions_(), units_(), initial_places_(std::move(initial_places)), root_unit_(r)
 {}
 
 /*------------------------------------------------------------------------------------------------*/
 
-unsigned int
-net::initial_place()
+const std::vector<unsigned int>&
+net::initial_places()
 const noexcept
 {
-  return initial_place_;
+  return initial_places_;
 }
 
 /*------------------------------------------------------------------------------------------------*/

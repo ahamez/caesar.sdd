@@ -335,14 +335,37 @@ bpn(std::istream& in)
   units_maker_type map;
 
   // Temporary placeholders.
-  std::string s0, s1;
-  unsigned int ui0, ui1;
+  std::string s0;
+  unsigned int ui1;
 
   // The number of place. We don't need this information.
   in >> kw("places") >> sharp() >> interval();
 
-  // The initial place.
-  in >> kw("initial") >> kw("place") >> uint(ui0);
+  // Initial place(s).
+  in >> kw("initial") >> s0;
+  unsigned int nb_initial_places = 0;
+  if (s0 == "place")
+  {
+    nb_initial_places = 1;
+  }
+  else if (s0 == "places")
+  {
+    in >> sharp(nb_initial_places);
+  }
+  else
+  {
+    throw parse_error("Expected 'place' or 'places' got " + s0);
+  }
+
+  std::vector<unsigned int> initial_places;
+  initial_places.reserve(nb_initial_places);
+  for (; nb_initial_places > 0; --nb_initial_places)
+  {
+    unsigned int u;
+    in >> uint(u);
+    std::cout << "Add initial place " << u << std::endl;
+    initial_places.push_back(u);
+  }
 
   // The number of units.
   unsigned int nb_units;
@@ -352,7 +375,7 @@ bpn(std::istream& in)
   in >> kw("root") >> kw("unit") >> uint(ui1);
 
   // Create the Petri net.
-  auto net_ptr = std::make_shared<pn::net>(ui0, ui1);
+  auto net_ptr = std::make_shared<pn::net>(std::move(initial_places), ui1);
   auto& net = *net_ptr;
 
   // Units
@@ -416,7 +439,8 @@ bpn(std::istream& in)
   }
 
   // Set marking of initial place.
-  net.update_place(net.initial_place(), 1);
+  std::for_each( net.initial_places().cbegin(), net.initial_places().cend()
+               , [&](unsigned int p){net.update_place(p, 1);});
 
   // Create units.
   std::vector<unsigned int> empty_vec;

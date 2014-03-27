@@ -53,11 +53,32 @@ SDD
 initial_state(const order& o, const pn::net& net)
 {
   using flat_set = sdd::values::flat_set<unsigned int>;
-  return SDD(o, [&](unsigned int unit)
-                   -> flat_set
+  return SDD(o, [&](unsigned int unit) -> flat_set
                    {
-                     return unit == net.root_unit() ? flat_set({net.initial_place() + 1})
-                                                    : flat_set({0});
+                     std::vector<unsigned int> marked_places;
+                     for (const auto& p : net.places_of_unit(unit))
+                     {
+                       /// @todo Put an 'initial' flag in place to avoid linear search.
+                       const auto search = std::find( net.initial_places().cbegin()
+                                                    , net.initial_places().cend()
+                                                    , p.get().id);
+                       if (search != net.initial_places().cend())
+                       {
+                         marked_places.push_back(p.get().id);
+                       }
+                     }
+                     if (marked_places.size() == 0)
+                     {
+                       return flat_set({0});
+                     }
+                     else if (marked_places.size() == 1)
+                     {
+                       return flat_set({marked_places[0] + 1});
+                     }
+                     else
+                     {
+                       throw std::runtime_error("More that one initial place in an unit.");
+                     }
                    }
             );
 }
