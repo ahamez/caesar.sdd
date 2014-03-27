@@ -9,92 +9,7 @@
 #include "parsers/parse_error.hh"
 #include "pn/unit.hh"
 
-namespace pnmc { namespace parsers {
-
-// BPN grammar
-// see http://cadp.inria.fr/man/caesar.bdd.html
-//
-// <basic-petri-net> ::= 
-//    places #<nb-of-places> <min-place-nb>...<max-place-nb>\n
-//    initial place <init-place-nb>\n
-//    units #<nb-of-units> <min-unit-nb>...<max-unit-nb>\n
-//    root unit <root-unit-nb>\n
-//    <unit-description>*\n
-//    transitions #<nb-of-trans> <min-trans-nb>...<max-trans-nb>\n
-//    <trans-description>*\n
-// <unit-description> ::=
-//    U<unit-nb>
-//    #<nb-of-subplaces> <min-subplace-nb>...<max-subplace-nb>
-//    #<nb-of-subunits> <subunit-list>\n
-// <trans-description> ::=
-//    T<transition-nb> 
-//    #<nb-of-input-places> <input-place-list>
-//    #<nb-of-output-places> <output-place-list>\n
-// <input-place-list> ::= <place-nb>*
-// <output-place-list> ::= <place-nb>*
-// <subunit-list> ::= <unit-nb>*
-// <nb-of-places>        ::= <unsigned-integer>
-// <min-place-nb>        ::= <unsigned-integer>
-// <max-place-nb>        ::= <unsigned-integer>
-// <init-place-nb>       ::= <unsigned-integer>
-// <place-nb>            ::= <unsigned-integer>
-// <nb-of-units>         ::= <unsigned-integer>
-// <min-unit-nb>         ::= <unsigned-integer>
-// <max-unit-nb>         ::= <unsigned-integer>
-// <root-unit-nb>        ::= <unsigned-integer>
-// <unit-nb>             ::= <unsigned-integer>
-// <nb-of-trans>         ::= <unsigned-integer>
-// <min-trans-nb>        ::= <unsigned-integer>
-// <max-trans-nb>        ::= <unsigned-integer>
-// <nb-of-subplaces>     ::= <unsigned-integer>
-// <min-subplace-nb>     ::= <unsigned-integer>
-// <max-subplace-nb>     ::= <unsigned-integer>
-// <nb-of-subunits>      ::= <unsigned-integer>
-// <transition-nb>       ::= <unsigned-integer>
-// <nb-of-input-places>  ::= <unsigned-integer>
-// <nb-of-output-places> ::= <unsigned-integer>
-//
-// A valid BPN file should satisfy the following constraints: 
-//
-// In <basic-petri-net>:
-//   1.  <nb-of-places> > 0     -- a net has at least one place
-//   2.  <max-place-nb> - <min-place-nb> + 1 = <nb-of-places>
-//   3.  <min-place-nb> <= <init-place-nb> <= <max-place-nb>
-//   4.  <nb-of-units> > 0     -- a net has at least one unit
-//   5.  <max-unit-nb> - <min-unit-nb> + 1 = <nb-of-units>
-//   6.  <min-unit-nb> <= <root-unit-nb> <= <max-unit-nb>
-//   7.  <nb-of-trans> >= 0    -- a net may have zero transition
-//   8.  <nb-of-trans> = 0 => <min-trans-nb> = 1
-//   9.  <nb-of-trans> = 0 => <max-trans-nb> = 0
-//  10.  <max-trans-nb> - <min-trans-nb> + 1 = <nb-of-trans>
-// In each <unit-description>:
-//  11.  <min-unit-nb> <= <unit-nb> <= <max-unit-nb>
-//  12.  <nb-of-subplaces> > 0 -- a unit has at least one local place
-//  13.  <min-place-nb> <= <min-subplace-nb> <= <max-place-nb>
-//  14.  <min-place-nb> <= <max-subplace-nb> <= <max-place-nb>
-//  15.  <max-subplace-nb> - <min-sublace-nb> + 1 = <nb-of-subplaces>
-//  16.  <nb-of-subunits> >= 0
-//  17.  length (<subunit-list>) = <nb-of-subunits>
-// Globally to all <unit-description>s:
-//  18.  each <unit-nb> occurs once and only once after a "U"
-//  19.  the sum of all <nb-of-subplaces> is equal to <nb-of-places>
-//  20.  all intervals <min-subplace-nb>...<max-subplace-nb> form
-//       a partition of <min-place-nb>...<max-place-nb>
-//  21.  the sum of all <nb-of-subunits> is equal to <nb-of-units>
-//  22.  <root-unit-number> and all non-empty <subunit-list>s form
-//       a partition of <min-unit-nb>...<max-unit-nb>
-// In each <subunit-list>:
-//  23.  <min-unit-nb> <= <unit-nb> <= <max-unit-nb>
-// In each <trans-description>:
-//  24.  <min-trans-nb> <= <trans-nb> <= <max-trans-nb>
-//  25.  length (<input-place-list>) = <nb-of-input-places>
-//  26.  length (<output-place-list>) = <nb-of-output-places>
-// Globally to all <trans-description>s:
-//  27.  each <trans-nb> occurs once and only once after a "T"
-// In each <input-place-list> and each <output-place-list>
-//  28. <min-place-nb> <= <place-nb> <= <max-place-nb>
-
-namespace /* anonymous */ {
+namespace pnmc { namespace parsers { namespace /* anonymous */ {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -338,7 +253,13 @@ bpn(std::istream& in)
   std::string s0;
   unsigned int ui1;
 
-  // The number of place. We don't need this information.
+  // Pragmas.
+  while ((in >> std::ws).peek() == std::char_traits<char>::to_int_type('!'))
+  {
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+  }
+
+  // The number of places. We don't need this information.
   in >> kw("places") >> sharp() >> interval();
 
   // Initial place(s).
