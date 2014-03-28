@@ -76,6 +76,7 @@ main(int argc, char** argv)
                   << std::endl;
         return 4;
       }
+      pn::tina(tina_out, *net_ptr);
     }
     mc::mc worker(conf);
     worker(*net_ptr);
