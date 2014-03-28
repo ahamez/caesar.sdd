@@ -7,6 +7,7 @@
 #include <utility> // pair
 
 #include <boost/dynamic_bitset.hpp>
+#include <sdd/order/strategies/force.hh>
 
 #include "mc/units/concurrent_units.hh"
 #include "mc/units/nopost_live.hh"
@@ -15,6 +16,7 @@
 #include "mc/units/pre.hh"
 #include "mc/units/sdd.hh"
 #include "mc/units/worker.hh"
+
 
 namespace pnmc { namespace mc { namespace units {
 
@@ -25,6 +27,27 @@ namespace chrono = std::chrono;
 order
 mk_order(const pn::net& net)
 {
+//  std::vector<unsigned int> units;
+//  units.reserve(net.units().size());
+//
+//  std::unordered_set<unsigned int> units_added;
+//  units_added.reserve(net.units().size());
+//
+//  // Iteration on places because we want to put units in the same order as the places they
+//  // contain.
+//  for (const auto& p : net.places())
+//  {
+//    if (not net.places_of_unit(p.unit).empty()) // Don't add empty units.
+//    {
+//      if (units_added.emplace(p.unit).second) // Check if unit has already been added.
+//      {
+//        units.push_back(p.unit);
+//      }
+//    }
+//  }
+//
+//  return {order_builder(units.begin(), units.end())};
+
   std::vector<unsigned int> units;
   units.reserve(net.units().size());
 
@@ -37,14 +60,51 @@ mk_order(const pn::net& net)
   {
     if (not net.places_of_unit(p.unit).empty()) // Don't add empty units.
     {
-      if (units_added.emplace(p.unit).second) // Check if units has already been added.
+      if (units_added.emplace(p.unit).second) // Check if unit has already been added.
       {
         units.push_back(p.unit);
       }
     }
   }
 
-  return {order_builder(units.begin(), units.end())};
+  // The hypergraph that stores connections between the places of the Petri net.
+  sdd::force::hypergraph<sdd_conf> graph(units.cbegin(), units.cend());
+
+
+  std::vector<unsigned int> identifiers;
+  std::unordered_set<unsigned int> identifiers_added;
+  for (const auto& transition : net.transitions())
+  {
+    for (const auto& arc : transition.pre)
+    {
+//      identifiers.emplace_back(arc.first);
+      const auto u = net.unit_of_place(arc.first);
+      if (identifiers_added.emplace(arc.first).second)
+      {
+        identifiers.push_back(u);
+      }
+    }
+
+    for (const auto& arc : transition.post)
+    {
+      const auto u = net.unit_of_place(arc.first);
+      if (identifiers_added.emplace(arc.first).second)
+      {
+        identifiers.push_back(u);
+      }
+    }
+    graph.add_hyperedge(identifiers.cbegin(), identifiers.cend());
+
+    // We use this container again in the next loop.
+    identifiers.clear();
+    identifiers_added.clear();
+  }
+  // Apply the FORCE ordering strategy.
+  auto force = sdd::force::worker<sdd_conf>(graph);
+  const auto o = force();
+
+  // Dump the hypergraph to a DOT file if required by the configuration.
+  return sdd::order<sdd_conf>(o);
 }
 
 /*------------------------------------------------------------------------------------------------*/
