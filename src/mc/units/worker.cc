@@ -118,11 +118,7 @@ initial_state(const order& o, const pn::net& net)
                      std::vector<unsigned int> marked_places;
                      for (const auto& p : net.places_of_unit(unit))
                      {
-                       /// @todo Put an 'initial' flag in place to avoid linear search.
-                       const auto search = std::find( net.initial_places().cbegin()
-                                                    , net.initial_places().cend()
-                                                    , p.get().id);
-                       if (search != net.initial_places().cend())
+                       if (p.get().initial())
                        {
                          marked_places.push_back(p.get().id);
                        }
