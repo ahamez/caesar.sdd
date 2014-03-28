@@ -110,8 +110,7 @@ fill_configuration(int argc, char** argv)
   po::variables_map vm;
   po::parsed_options parsed = po::command_line_parser(argc, argv)
                                     .options(cmdline_options)
-                                    .style ( po::command_line_style::default_style
-                                           | po::command_line_style::allow_long_disguise)
+                                    .style (po::command_line_style::default_style)
                                     .positional(p)
                                     .allow_unregistered()
                                     .run();
