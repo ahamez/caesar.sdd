@@ -13,6 +13,15 @@ place::place(unsigned int id, unsigned int m, unsigned int u)
 /*------------------------------------------------------------------------------------------------*/
 
 bool
+place::initial()
+const noexcept
+{
+  return marking != 0;
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+bool
 operator<(const pn::place& lhs, const pn::place& rhs)
 {
   return lhs.id < rhs.id;

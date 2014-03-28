@@ -358,7 +358,7 @@ bpn(std::istream& in)
     }
   }
 
-  // Set marking of initial place.
+  // Set marking of initial places.
   std::for_each( net.initial_places().cbegin(), net.initial_places().cend()
                , [&](unsigned int p){net.update_place(p, 1);});
 

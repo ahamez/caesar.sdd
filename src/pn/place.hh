@@ -21,6 +21,10 @@ struct place
 
   /// @brief Constructor.
   place(unsigned int id, unsigned int marking, unsigned int unit);
+
+  /// @brief Tells if this place has an initial marking.
+  bool
+  initial() const noexcept;
 };
 
 /*------------------------------------------------------------------------------------------------*/
