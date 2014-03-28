@@ -75,9 +75,28 @@ mk_order(const pn::net& net)
   std::unordered_set<unsigned int> identifiers_added;
   for (const auto& transition : net.transitions())
   {
+//    // First check if we should add this transition.
+//    // We don't care about transitions that only initialize the Petri net.
+//    bool add_transition = true;
+//    for (const auto& arc : transition.pre)
+//    {
+//      assert(net.places().find(arc.first) != net.places().end());
+//      const auto& place = *net.places().find(arc.first);
+//      /// @todo Check that the place has no input transitions.
+//      if (not place.initial())
+//      {
+//        add_transition = false;
+//        break;
+//      }
+//    }
+//
+//    if (not add_transition)
+//    {
+//      continue;
+//    }
+
     for (const auto& arc : transition.pre)
     {
-//      identifiers.emplace_back(arc.first);
       const auto u = net.unit_of_place(arc.first);
       if (identifiers_added.emplace(arc.first).second)
       {
