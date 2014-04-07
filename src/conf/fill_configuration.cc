@@ -22,6 +22,23 @@ const std::string version
 
 /*------------------------------------------------------------------------------------------------*/
 
+// General options
+const auto help_str = "help";
+const auto version_str = "version";
+
+// Order options
+const auto order_show_str = "order-show";
+const auto order_force_str = "order-force";
+const auto order_force_iterations_str = "order-force-iterations";
+
+// Statistics options
+const auto show_nb_states_str = "show-nb-states";
+const auto show_time_str = "show-time";
+
+// CADP options
+const auto dead_str = "dead";
+const auto unit_str = "unit";
+
 boost::optional<pnmc_configuration>
 fill_configuration(int argc, char** argv)
 {
@@ -29,37 +46,27 @@ fill_configuration(int argc, char** argv)
 
   po::options_description general_options("General options");
   general_options.add_options()
-    ( "help"                  , "Show this help")
-    ( "version"               , "Show version");
+    ( help_str                  , "Show this help")
+    ( version_str               , "Show version");
 
   po::options_description order_options("Order options");
   order_options.add_options()
-    ("show-order"             , "Show the order")
-    ("flat"                   , "Don't use hierarchy informations")
-    ("order-min-height"       , po::value<unsigned int>()->default_value(1)
-                              , "Minimal number of variables at every level of the SDD");
-
-  po::options_description pn_options("Petri net options");
-  pn_options.add_options()
-    ("places"                 , "Use one variable per place")
-    ("units"                  , "Use one variable per unit")
-    ("export-tina"            , po::value<std::string>()
-                              , "Export the BPN to the TINA format");
-
-  po::options_description hom_options("Homomorphisms options");
-  hom_options.add_options()
-    ("show-relation"          , "Show the transition relation");
+    (order_show_str             , "Show the order")
+    (order_force_str            , "Use the FORCE ordering heuristic")
+    (order_force_iterations_str , po::value<unsigned int>()->default_value(100)
+                                , "Number of FORCE iterations")
+  ;
 
   po::options_description stats_options("Statistics options");
   stats_options.add_options()
-    ("show-nb-states"           , "Show the number of states")
-    ("show-hash-stats"          , "Show the hash tables statistics")
-    ("show-time"                , "Show miscellaneous execution times");
+    (show_nb_states_str           , "Show the number of states")
+    (show_time_str                , "Show miscellaneous execution times")
+    ;
 
   po::options_description cadp_options("CADP options");
   cadp_options.add_options()
-    ("dead"         , "Compute dead transitions")
-    ("unit"         , "Compute concurrent units");
+    (dead_str         , "Compute dead transitions")
+    (unit_str         , "Compute concurrent units");
 
   po::options_description hidden_options("Hidden options");
   hidden_options.add_options()
@@ -72,8 +79,6 @@ fill_configuration(int argc, char** argv)
   cmdline_options
   	.add(general_options)
     .add(order_options)
-    .add(hom_options)
-    .add(pn_options)
     .add(cadp_options)
     .add(stats_options)
   	.add(hidden_options);
@@ -91,14 +96,12 @@ fill_configuration(int argc, char** argv)
   std::vector<std::string> unrecognized
     = po::collect_unrecognized(parsed.options,po::exclude_positional);
   
-  if (vm.count("help") or unrecognized.size() > 0)
+  if (vm.count(help_str) or unrecognized.size() > 0)
   {
     std::cout << version << std::endl;
     std::cout << "Usage: " << argv[0] << " [options] file " << std::endl << std::endl;
     std::cout << general_options << std::endl;
     std::cout << order_options << std::endl;
-    std::cout << hom_options << std::endl;
-    std::cout << pn_options << std::endl;
     std::cout << cadp_options << std::endl;
     std::cout << stats_options << std::endl;
     return boost::optional<pnmc_configuration>();
@@ -115,20 +118,11 @@ fill_configuration(int argc, char** argv)
   {
     conf.file_name = vm["input-file"].as<std::string>();
   }
-  conf.export_to_tina = vm.count("export-tina");
-  if (conf.export_to_tina)
-  {
-    conf.tina_file_name = vm["export-tina"].as<std::string>();
-  }
-  conf.show_nb_states = vm.count("show-nb-states");
-  conf.order_show = vm.count("show-order");
-  conf.order_force_flat = vm.count("flat");
-  conf.order_min_height = vm["order-min-height"].as<unsigned int>();
-  conf.show_relation = vm.count("show-relation");
-  conf.show_hash_tables_stats = vm.count("show-hash-stats");
-  conf.show_time = vm.count("show-time");
-  conf.compute_dead_transitions = vm.count("dead");
-  conf.compute_concurrent_units = vm.count("unit");
+  conf.show_nb_states = vm.count(show_nb_states_str);
+  conf.order_show = vm.count(order_show_str);
+  conf.show_time = vm.count(show_time_str);
+  conf.compute_dead_transitions = vm.count(dead_str);
+  conf.compute_concurrent_units = vm.count(unit_str);
 
   return conf;
 }

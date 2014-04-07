@@ -212,11 +212,6 @@ const
   const SDD m0 = initial_state(o, net);
   const homomorphism h = transition_relation(conf, o, net, transitions_bitset);
 
-  if (conf.show_relation)
-  {
-    std::cout << h << std::endl;
-  }
-
   const SDD m = state_space(conf, o, m0, h);
 
   if (conf.show_nb_states)
@@ -235,11 +230,6 @@ const
   if (conf.compute_concurrent_units)
   {
     compute_concurrent_units(conf, net, o, m);
-  }
-
-  if (conf.show_hash_tables_stats)
-  {
-//    std::cout << manager << std::endl;
   }
 }
 

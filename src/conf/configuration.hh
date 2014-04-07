@@ -15,13 +15,9 @@ struct pnmc_configuration
   std::string tina_file_name;
 
   bool order_show;
-  bool order_force_flat;
-  unsigned int order_min_height;
 
   bool show_nb_states;
-  bool show_relation;
   bool show_time;
-  bool show_hash_tables_stats;
 
   bool compute_dead_transitions;
   bool compute_concurrent_units;
