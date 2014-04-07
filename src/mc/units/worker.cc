@@ -25,29 +25,8 @@ namespace chrono = std::chrono;
 /*------------------------------------------------------------------------------------------------*/
 
 order
-mk_order(const pn::net& net)
+mk_order(const conf::pnmc_configuration& conf, const pn::net& net)
 {
-//  std::vector<unsigned int> units;
-//  units.reserve(net.units().size());
-//
-//  std::unordered_set<unsigned int> units_added;
-//  units_added.reserve(net.units().size());
-//
-//  // Iteration on places because we want to put units in the same order as the places they
-//  // contain.
-//  for (const auto& p : net.places())
-//  {
-//    if (not net.places_of_unit(p.unit).empty()) // Don't add empty units.
-//    {
-//      if (units_added.emplace(p.unit).second) // Check if unit has already been added.
-//      {
-//        units.push_back(p.unit);
-//      }
-//    }
-//  }
-//
-//  return {order_builder(units.begin(), units.end())};
-
   std::vector<unsigned int> units;
   units.reserve(net.units().size());
 
@@ -67,14 +46,19 @@ mk_order(const pn::net& net)
     }
   }
 
-  // The hypergraph that stores connections between the places of the Petri net.
-  sdd::force::hypergraph<sdd_conf> graph(units.cbegin(), units.cend());
-
-
-  std::vector<unsigned int> identifiers;
-  std::unordered_set<unsigned int> identifiers_added;
-  for (const auto& transition : net.transitions())
+  if (not conf.order_force)
   {
+    return {order_builder(units.begin(), units.end())};
+  }
+  else
+  {
+    // The hypergraph that stores connections between the places of the Petri net.
+    sdd::force::hypergraph<sdd_conf> graph(units.cbegin(), units.cend());
+
+    std::vector<unsigned int> identifiers;
+    std::unordered_set<unsigned int> identifiers_added;
+    for (const auto& transition : net.transitions())
+    {
 //    // First check if we should add this transition.
 //    // We don't care about transitions that only initialize the Petri net.
 //    bool add_transition = true;
@@ -94,36 +78,33 @@ mk_order(const pn::net& net)
 //    {
 //      continue;
 //    }
-
-    for (const auto& arc : transition.pre)
-    {
-      const auto u = net.unit_of_place(arc.first);
-      if (identifiers_added.emplace(arc.first).second)
+      for (const auto& arc : transition.pre)
       {
-        identifiers.push_back(u);
+        const auto u = net.unit_of_place(arc.first);
+        if (identifiers_added.emplace(arc.first).second)
+        {
+          identifiers.push_back(u);
+        }
       }
-    }
-
-    for (const auto& arc : transition.post)
-    {
-      const auto u = net.unit_of_place(arc.first);
-      if (identifiers_added.emplace(arc.first).second)
+      
+      for (const auto& arc : transition.post)
       {
-        identifiers.push_back(u);
+        const auto u = net.unit_of_place(arc.first);
+        if (identifiers_added.emplace(arc.first).second)
+        {
+          identifiers.push_back(u);
+        }
       }
+      graph.add_hyperedge(identifiers.cbegin(), identifiers.cend());
+      
+      // We use this container again in the next loop.
+      identifiers.clear();
+      identifiers_added.clear();
     }
-    graph.add_hyperedge(identifiers.cbegin(), identifiers.cend());
-
-    // We use this container again in the next loop.
-    identifiers.clear();
-    identifiers_added.clear();
+    // Apply the FORCE ordering strategy.
+    auto force = sdd::force::worker<sdd_conf>(graph);
+    return force();
   }
-  // Apply the FORCE ordering strategy.
-  auto force = sdd::force::worker<sdd_conf>(graph);
-  const auto o = force();
-
-  // Dump the hypergraph to a DOT file if required by the configuration.
-  return sdd::order<sdd_conf>(o);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -280,7 +261,7 @@ const
   auto manager = sdd::manager<sdd_conf>::init();
   boost::dynamic_bitset<> transitions_bitset(net.transitions().size());
 
-  const auto o = mk_order(net);
+  const auto o = mk_order(conf, net);
   assert(not o.empty() && "Empty order");
 
   if (conf.order_show)

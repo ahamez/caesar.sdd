@@ -15,6 +15,7 @@ struct pnmc_configuration
   std::string tina_file_name;
 
   bool order_show;
+  bool order_force;
 
   bool show_nb_states;
   bool show_time;

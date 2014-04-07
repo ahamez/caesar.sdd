@@ -120,6 +120,7 @@ fill_configuration(int argc, char** argv)
   }
   conf.show_nb_states = vm.count(show_nb_states_str);
   conf.order_show = vm.count(order_show_str);
+  conf.order_force = vm.count(order_force_str);
   conf.show_time = vm.count(show_time_str);
   conf.compute_dead_transitions = vm.count(dead_str);
   conf.compute_concurrent_units = vm.count(unit_str);
