@@ -7,16 +7,12 @@ namespace pnmc { namespace conf {
   
 /*------------------------------------------------------------------------------------------------*/
 
-enum class pn_encoding {places, units};
-
 struct pnmc_configuration
 {
   std::string file_name;
   bool read_stdin;
   bool export_to_tina;
   std::string tina_file_name;
-
-  pn_encoding encoding;
 
   bool order_show;
   bool order_force_flat;

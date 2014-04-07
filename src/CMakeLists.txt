@@ -1,12 +1,6 @@
 set(SOURCES
     main.cc
     conf/fill_configuration.cc
-    mc/places/concurrent_units.cc
-    mc/places/nopost_live.cc
-    mc/places/post.cc
-    mc/places/post_live.cc
-    mc/places/pre.cc
-    mc/places/worker.cc
     mc/units/concurrent_units.cc
     mc/units/nopost_live.cc
     mc/units/post.cc

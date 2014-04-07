@@ -22,35 +22,6 @@ const std::string version
 
 /*------------------------------------------------------------------------------------------------*/
 
-pn_encoding
-encoding(const po::variables_map& vm)
-{
-  const bool places = vm.count("places");
-  const bool units = vm.count("units");
-
-  if (not (places or units))
-  {
-    return pn_encoding::units;
-  }
-  else if (not (places xor units))
-  {
-    throw po::error("Can specify only one encoding type.");
-  }
-  else
-  {
-    if (places)
-    {
-      return pn_encoding::places;
-    }
-    else // units
-    {
-      return pn_encoding::units;
-    }
-  }
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
 boost::optional<pnmc_configuration>
 fill_configuration(int argc, char** argv)
 {
@@ -151,7 +122,6 @@ fill_configuration(int argc, char** argv)
   }
   conf.show_nb_states = vm.count("show-nb-states");
   conf.order_show = vm.count("show-order");
-  conf.encoding = encoding(vm);
   conf.order_force_flat = vm.count("flat");
   conf.order_min_height = vm["order-min-height"].as<unsigned int>();
   conf.show_relation = vm.count("show-relation");
