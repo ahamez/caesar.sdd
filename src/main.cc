@@ -67,16 +67,6 @@ main(int argc, char** argv)
   {
     auto in = file_or_cin(conf);
     const auto net_ptr = parsers::parse(*in);
-    if (conf.export_to_tina)
-    {
-      std::ofstream tina_out(conf.tina_file_name);
-      if (not tina_out.is_open())
-      {
-        std::cerr << "Can't open '" << conf.tina_file_name << "' for writing TINA export."
-                  << std::endl;
-        return 4;
-      }
-    }
     mc::mc worker(conf);
     worker(*net_ptr);
   }
