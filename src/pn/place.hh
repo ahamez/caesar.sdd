@@ -2,6 +2,7 @@
 #define _PNMC_PN_PLACE_HH_
 
 #include <iosfwd>
+#include <map>
 #include <string>
 
 namespace pnmc { namespace pn {
@@ -22,9 +23,18 @@ struct place
   /// @brief Constructor.
   place(unsigned int id, unsigned int marking, unsigned int unit);
 
+  /// @brief Pre transitions.
+  std::multimap<unsigned int, unsigned int> pre;
+
+  /// @brief Post transitions.
+  std::multimap<unsigned int, unsigned int> post;
+
   /// @brief Tells if this place has an initial marking.
   bool
   initial() const noexcept;
+
+  /// @brief Tell if this place is connected to one or more transitions.
+  bool connected() const noexcept;
 };
 
 /*------------------------------------------------------------------------------------------------*/

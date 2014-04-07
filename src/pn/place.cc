@@ -22,6 +22,15 @@ const noexcept
 /*------------------------------------------------------------------------------------------------*/
 
 bool
+place::connected()
+const noexcept
+{
+  return not(pre.empty() and post.empty());
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+bool
 operator<(const pn::place& lhs, const pn::place& rhs)
 {
   return lhs.id < rhs.id;

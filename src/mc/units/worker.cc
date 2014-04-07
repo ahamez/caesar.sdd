@@ -59,25 +59,24 @@ mk_order(const conf::pnmc_configuration& conf, const pn::net& net)
     std::unordered_set<unsigned int> identifiers_added;
     for (const auto& transition : net.transitions())
     {
-//    // First check if we should add this transition.
-//    // We don't care about transitions that only initialize the Petri net.
-//    bool add_transition = true;
-//    for (const auto& arc : transition.pre)
-//    {
-//      assert(net.places().find(arc.first) != net.places().end());
-//      const auto& place = *net.places().find(arc.first);
-//      /// @todo Check that the place has no input transitions.
-//      if (not place.initial())
-//      {
-//        add_transition = false;
-//        break;
-//      }
-//    }
-//
-//    if (not add_transition)
-//    {
-//      continue;
-//    }
+      // First check if we should add this transition to the hypergraph.
+      // We don't care about transitions that only initialize the Petri net.
+      bool add_transition = false;
+      for (const auto& arc : transition.pre)
+      {
+        const auto& place = *net.places_by_id().find(arc.first);
+        if ((not place.initial()) or (place.initial() and not place.pre.empty()))
+        {
+          add_transition = true;
+          break;
+        }
+      }
+
+      if (not add_transition)
+      {
+        continue;
+      }
+
       for (const auto& arc : transition.pre)
       {
         const auto u = net.unit_of_place(arc.first);
