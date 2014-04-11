@@ -257,7 +257,7 @@ void
 worker::operator()(const pn::net& net)
 const
 {
-  auto manager = sdd::manager<sdd_conf>::init();
+  auto manager = sdd::init<sdd_conf>();
   boost::dynamic_bitset<> transitions_bitset(net.transitions().size());
 
   const auto o = mk_order(conf, net);
