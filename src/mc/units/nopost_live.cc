@@ -49,7 +49,7 @@ std::size_t
 hash<pnmc::mc::units::nopost_live>::operator()(const pnmc::mc::units::nopost_live& p)
 const noexcept
 {
-  return sdd::util::hash(p.transition);
+  return sdd::hash::seed(p.transition);
 }
 
 /*------------------------------------------------------------------------------------------------*/

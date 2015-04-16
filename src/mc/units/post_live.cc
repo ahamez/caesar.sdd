@@ -49,9 +49,8 @@ std::size_t
 hash<pnmc::mc::units::post_live>::operator()(const pnmc::mc::units::post_live& p)
 const noexcept
 {
-  std::size_t seed = sdd::util::hash(p.place);
-  sdd::util::hash_combine(seed, p.transition);
-  return seed;
+  using namespace sdd::hash;
+  return seed() (val(p.place)) (val(p.transition));
 }
 
 /*------------------------------------------------------------------------------------------------*/

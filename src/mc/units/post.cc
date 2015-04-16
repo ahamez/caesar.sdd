@@ -48,9 +48,8 @@ std::size_t
 hash<pnmc::mc::units::post>::operator()(const pnmc::mc::units::post& p)
 const noexcept
 {
-  std::size_t seed = 9867241367;
-  sdd::util::hash_combine(seed, p.place);
-  return seed;
+  using namespace sdd::hash;
+  return seed(9867241367) (val(p.place));
 }
 
 /*------------------------------------------------------------------------------------------------*/
