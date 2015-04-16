@@ -9,7 +9,7 @@
 #include <boost/dynamic_bitset.hpp>
 #include <sdd/order/strategies/force.hh>
 
-#include "mc/units/concurrent_units.hh"
+//#include "mc/units/concurrent_units.hh"
 #include "mc/units/nopost_live.hh"
 #include "mc/units/post.hh"
 #include "mc/units/post_live.hh"
@@ -286,10 +286,10 @@ const
     }
   }
 
-  if (conf.compute_concurrent_units)
-  {
-    compute_concurrent_units(conf, net, o, m);
-  }
+//  if (conf.compute_concurrent_units)
+//  {
+//    compute_concurrent_units(conf, net, o, m);
+//  }
 }
 
 /*------------------------------------------------------------------------------------------------*/
