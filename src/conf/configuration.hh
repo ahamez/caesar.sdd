@@ -22,6 +22,8 @@ struct pnmc_configuration
 
   bool compute_dead_transitions;
   bool compute_concurrent_units;
+
+  bool check_one_safe;
 };
 
 /*------------------------------------------------------------------------------------------------*/

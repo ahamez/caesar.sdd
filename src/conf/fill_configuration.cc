@@ -23,21 +23,24 @@ const std::string version
 /*------------------------------------------------------------------------------------------------*/
 
 // General options
-const auto help_str = "help";
-const auto version_str = "version";
+constexpr auto help_str = "help";
+constexpr auto version_str = "version";
 
 // Order options
-const auto order_show_str = "order-show";
-const auto order_force_str = "order-force";
-const auto order_force_iterations_str = "order-force-iterations";
+constexpr auto order_show_str = "order-show";
+constexpr auto order_force_str = "order-force";
+constexpr auto order_force_iterations_str = "order-force-iterations";
+
+// Petri net options
+constexpr auto check_safe_net_str = "check-1-safe";
 
 // Statistics options
-const auto show_nb_states_str = "show-nb-states";
-const auto show_time_str = "show-time";
+constexpr auto show_nb_states_str = "show-nb-states";
+constexpr auto show_time_str = "show-time";
 
 // CADP options
-const auto dead_str = "dead";
-const auto unit_str = "unit";
+constexpr auto dead_str = "dead";
+constexpr auto unit_str = "unit";
 
 boost::optional<pnmc_configuration>
 fill_configuration(int argc, char** argv)
@@ -55,6 +58,11 @@ fill_configuration(int argc, char** argv)
     (order_force_str            , "Use the FORCE ordering heuristic")
     (order_force_iterations_str , po::value<unsigned int>()->default_value(100)
                                 , "Number of FORCE iterations")
+  ;
+
+  po::options_description pn_options("Petri net options");
+  pn_options.add_options()
+    (check_safe_net_str           , "Interrupt computation if a marking > 1")
   ;
 
   po::options_description stats_options("Statistics options");
@@ -79,6 +87,7 @@ fill_configuration(int argc, char** argv)
   cmdline_options
   	.add(general_options)
     .add(order_options)
+    .add(pn_options)
     .add(cadp_options)
     .add(stats_options)
   	.add(hidden_options);
@@ -102,6 +111,7 @@ fill_configuration(int argc, char** argv)
     std::cout << "Usage: " << argv[0] << " [options] file " << std::endl << std::endl;
     std::cout << general_options << std::endl;
     std::cout << order_options << std::endl;
+    std::cout << pn_options << std::endl;
     std::cout << cadp_options << std::endl;
     std::cout << stats_options << std::endl;
     return boost::optional<pnmc_configuration>();
@@ -124,6 +134,7 @@ fill_configuration(int argc, char** argv)
   conf.show_time = vm.count(show_time_str);
   conf.compute_dead_transitions = vm.count(dead_str);
   conf.compute_concurrent_units = vm.count(unit_str);
+  conf.check_one_safe = vm.count(check_safe_net_str);
 
   return conf;
 }

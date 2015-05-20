@@ -3,8 +3,6 @@ set(SOURCES
     conf/fill_configuration.cc
     mc/units/concurrent_units.cc
     mc/units/nopost_live.cc
-    mc/units/post.cc
-    mc/units/post_live.cc
     mc/units/pre.cc
     mc/units/worker.cc
     mc/mc.cc
