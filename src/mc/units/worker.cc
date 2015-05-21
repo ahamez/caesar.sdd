@@ -214,7 +214,7 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
 
   if (conf.show_time)
   {
-    std::cout << "Transition relation time: " << elapsed << "s" << std::endl;
+    std::cout << "Transition relation time: " << elapsed << "s\n";
   }
 
   start = chrono::system_clock::now();
@@ -224,7 +224,7 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
 
   if (conf.show_time)
   {
-    std::cout << "Rewrite time: " << elapsed << "s" << std::endl;
+    std::cout << "Rewrite time: " << elapsed << "s\n";
   }
 
   return res;
@@ -242,7 +242,7 @@ state_space( const conf::pnmc_configuration& conf, const order& o, SDD m
   const std::size_t elapsed = chrono::duration_cast<chrono::seconds>(end-start).count();
   if (conf.show_time)
   {
-    std::cout << "State space computation time: " << elapsed << "s" << std::endl;
+    std::cout << "State space computation time: " << elapsed << "s\n";
   }
   return res;
 }
@@ -280,9 +280,14 @@ const
   {
     const SDD m = state_space(conf, o, m0, h);
 
+    if (conf.check_one_safe)
+    {
+      std::cout << "Petri net is 1-safe\n";
+    }
+
     if (conf.show_nb_states)
     {
-      std::cout << m.size().template convert_to<long double>() << " states" << std::endl;
+      std::cout << m.size().template convert_to<long double>() << " states\n";
     }
 
     if (conf.compute_dead_transitions)
