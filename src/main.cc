@@ -9,6 +9,7 @@
 #include "parsers/parse.hh"
 #include "parsers/parse_error.hh"
 #include "pn/tina.hh"
+#include "mc/units/exceptions.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -80,6 +81,11 @@ main(int argc, char** argv)
     std::cerr << "Error when parsing input." << std::endl;
     std::cerr << p.what() << std::endl;
     return 3;
+  }
+  catch (const mc::units::bound_error& e)
+  {
+    std::cerr << "Petri net is not 1-safe, marking of place " << e.place << " is > 1\n";
+    return 4;
   }
   return 0;
 }

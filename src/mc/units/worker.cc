@@ -114,11 +114,11 @@ initial_state(const order& o, const pn::net& net)
   return SDD(o, [&](unsigned int unit) -> flat_set
                    {
                      std::vector<unsigned int> marked_places;
-                     for (const auto& p : net.places_of_unit(unit))
+                     for (const pn::place& p : net.places_of_unit(unit))
                      {
-                       if (p.get().initial())
+                       if (p.initial())
                        {
-                         marked_places.push_back(p.get().id);
+                         marked_places.push_back(p.id);
                        }
                      }
                      if (marked_places.size() == 0)
@@ -276,36 +276,29 @@ const
   const SDD m0 = initial_state(o, net);
   const homomorphism h = transition_relation(conf, o, net, transitions_bitset);
 
-  try
+  const SDD m = state_space(conf, o, m0, h);
+
+  if (conf.check_one_safe)
   {
-    const SDD m = state_space(conf, o, m0, h);
+    std::cout << "Petri net is 1-safe\n";
+  }
 
-    if (conf.check_one_safe)
-    {
-      std::cout << "Petri net is 1-safe\n";
-    }
+  if (conf.show_nb_states)
+  {
+    std::cout << m.size().template convert_to<long double>() << " states\n";
+  }
 
-    if (conf.show_nb_states)
+  if (conf.compute_dead_transitions)
+  {
+    for (std::size_t i = 0; i < net.transitions().size(); ++i)
     {
-      std::cout << m.size().template convert_to<long double>() << " states\n";
-    }
-
-    if (conf.compute_dead_transitions)
-    {
-      for (std::size_t i = 0; i < net.transitions().size(); ++i)
-      {
-        std::cout << (!transitions_bitset[i]) << "\n";
-      }
-    }
-
-    if (conf.compute_concurrent_units)
-    {
-      compute_concurrent_units(conf, net, o, m);
+      std::cout << (!transitions_bitset[i]) << "\n";
     }
   }
-  catch (const bound_error& e)
+
+  if (conf.compute_concurrent_units)
   {
-    std::cout << "Petri net is not 1-safe, marking of place " << e.place << " is > 1\n";
+    compute_concurrent_units(conf, net, o, m);
   }
 }
 
