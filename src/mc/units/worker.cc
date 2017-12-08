@@ -101,7 +101,7 @@ mk_order(const conf::pnmc_configuration& conf, const pn::net& net)
     }
     // Apply the FORCE ordering strategy.
     auto force = sdd::force::worker<sdd_conf>(graph);
-    return force();
+    return force(200);
   }
 }
 
