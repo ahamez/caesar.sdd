@@ -19,3 +19,4 @@ set(SOURCES
 
 add_executable(caesar.sdd ${SOURCES})
 target_link_libraries(caesar.sdd ${Boost_LIBRARIES})
+install(TARGETS caesar.sdd DESTINATION bin)
