@@ -9,16 +9,11 @@ project (caesar.sdd)
 option (PACKED "Pack structures" OFF)
 option (PROFILE "Profile the library" OFF)
 option (LIBSDD "Path to libsdd")
-option (NO_COROUTINE "Don't use Boost.Coroutine" OFF)
 
 ################################################################################
 
 set(Boost_USE_STATIC_LIBS ON)
-if (NOT NO_COROUTINE)
-  find_package(Boost 1.57.0 REQUIRED COMPONENTS program_options coroutine context system thread)
-else ()
-  find_package(Boost 1.57.0 REQUIRED COMPONENTS program_options)
-endif ()
+find_package(Boost 1.57.0 REQUIRED COMPONENTS program_options)
 message("-- Boost Include: ${Boost_INCLUDE_DIR}")
 message("-- Boost Libraries: ${Boost_LIBRARY_DIRS}")
 
@@ -33,10 +28,6 @@ if (PROFILE)
 endif ()
 
 ################################################################################
-
-if (NO_COROUTINE)
-  add_definitions("-DHAS_NO_BOOST_COROUTINE")
-endif ()
 
 add_definitions("-Wall")
 add_definitions("-std=c++1y")
