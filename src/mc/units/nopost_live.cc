@@ -23,7 +23,7 @@ const noexcept
 /*------------------------------------------------------------------------------------------------*/
 
 std::ostream&
-operator<<(std::ostream& os, const nopost_live& p)
+operator<<(std::ostream& os, const nopost_live&)
 {
   return os << "nopost()";
 }

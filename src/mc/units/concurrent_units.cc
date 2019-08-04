@@ -62,7 +62,7 @@ struct query_visitor
 
   result_type
   operator()( const sdd::one_terminal<sdd_conf>&, const order&
-            , InputIterator, InputIterator, bool i_active, bool j_active)
+            , InputIterator, InputIterator, bool, bool)
   const noexcept
   {
     assert(false && "|1|");
