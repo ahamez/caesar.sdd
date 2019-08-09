@@ -29,12 +29,12 @@ operator<<(std::ostream& os, const transition& t)
   os << "tr " << t.id;
   for(auto p : t.pre)
   {
-    os << " " << p.first << p.second;
+    os << " (" << p.first << ", " << p.second << ")";
   }
   os << " -> ";
   for(auto p : t.post)
   {
-    os << " " << p.first << p.second;
+    os << " (" << p.first << ", " << p.second << ")";
   }  
   return os;
 }
