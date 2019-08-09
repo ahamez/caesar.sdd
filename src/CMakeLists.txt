@@ -15,6 +15,7 @@ set(SOURCES
     pn/tina.cc
     pn/transition.cc
     pn/unit.cc
+    compress/compress.cc
     )
 
 add_executable(caesar.sdd ${SOURCES})

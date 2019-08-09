@@ -9,6 +9,8 @@
 
 #include "mc/units/concurrent_units.hh"
 
+#include "compress/compress.hh"
+
 namespace pnmc { namespace mc { namespace units {
 
 /*------------------------------------------------------------------------------------------------*/
@@ -304,6 +306,7 @@ compute_concurrent_units( const conf::pnmc_configuration& conf, const pn::net& n
 {
   namespace chrono = std::chrono;
   chrono::time_point<chrono::system_clock> start = chrono::system_clock::now();
+  caesar_compress::compress compressor;
 
   const auto nb_units = net.units().size();
   unsigned int j_end = 1;
@@ -314,14 +317,14 @@ compute_concurrent_units( const conf::pnmc_configuration& conf, const pn::net& n
       if ( i == j or net.places_of_unit(i).empty() or net.places_of_unit(j).empty()
           or net.units_are_related(i, j))
       {
-        std::cout << "0 ";
+        compressor.dump_compression('0');
       }
       else
       {
-        std::cout << (query(net, states, o, i, j) ? "1 " : "0 ");
+        compressor.dump_compression((query(net, states, o, i, j) ? '1' : '0'));
       }
     }
-    std::cout << std::endl;
+    compressor.dump_compression('\n');
   }
 
   chrono::time_point<chrono::system_clock> end = chrono::system_clock::now();

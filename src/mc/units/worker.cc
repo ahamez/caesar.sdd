@@ -16,6 +16,7 @@
 #include "mc/units/sdd.hh"
 #include "mc/units/worker.hh"
 
+#include "compress/compress.hh"
 
 namespace pnmc { namespace mc { namespace units {
 
@@ -289,12 +290,14 @@ const
     std::cout << m.size().template convert_to<long double>() << " states\n";
   }
 
-  if (conf.compute_dead_transitions)
+  if (conf.compute_dead_transitions and net.transitions().size())
   {
+    caesar_compress::compress compressor;
     for (std::size_t i = 0; i < net.transitions().size(); ++i)
     {
-      std::cout << (!transitions_bitset[i]) << "\n";
+      compressor.dump_compression(transitions_bitset[i] ? '0' : '1');
     }
+    compressor.dump_compression('\n');
   }
 
   if (conf.compute_concurrent_units)
