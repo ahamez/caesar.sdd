@@ -193,10 +193,11 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
     }
     else if (conf.compute_dead_transitions)
     {
+      // Sink transition : Card(Pre) > 0 and Card(Post) = 0
       // Target the same variable as the pre that is fired just before this fake post.
-      const auto unit = transition.pre.begin()->first;
-
+      const auto unit = net.unit_of_place(transition.pre.begin()->first);
       const auto f = function(o, unit, nopost_live{tindex++, transitions_bitset});
+
       h_t = composition(h_t, sdd::carrier(o, unit, f));
     }
 
