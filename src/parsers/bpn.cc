@@ -341,6 +341,7 @@ bpn(std::istream& in)
     net.add_transition(transition_id);
 
     // Input places.
+    bool is_source_transition = nb_places == 0;
     for (; nb_places > 0; --nb_places)
     {
       unsigned int place_id;
@@ -350,11 +351,17 @@ bpn(std::istream& in)
 
     // Output places.
     in >> sharp(nb_places);
+    is_source_transition &= nb_places > 0;
     for (; nb_places > 0; --nb_places)
     {
       unsigned int place_id;
       in >> uint(place_id);
       net.add_post_place(transition_id, place_id, 1 /* arc valuation */);
+    }
+
+    if (is_source_transition)
+    {
+      throw parse_error("Source transition not allowed: T" + std::to_string(transition_id));
     }
   }
 
