@@ -162,7 +162,7 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
     if (transition.post.empty() and transition.pre.empty() and conf.compute_dead_transitions)
     {
       // Empty transition, but we need to increment the transition counter.
-      ++tindex;
+      transitions_bitset[tindex++] = true;
     }
     else if (not transition.post.empty())
     {
