@@ -24,8 +24,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#ifndef _CAESAR_COMPRESS_
-#define _CAESAR_COMPRESS_
+#pragma once
 
 namespace caesar_compress {
 
@@ -41,5 +40,3 @@ public:
 };
 
 } // namespace caesar_compress
-
-#endif // _CAESAR_COMPRESS_

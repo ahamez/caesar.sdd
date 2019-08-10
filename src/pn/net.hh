@@ -1,5 +1,4 @@
-#ifndef _PNMC_PN_NET_HH_
-#define _PNMC_PN_NET_HH_
+#pragma once
 
 #include <functional> // reference_wrapper
 #include <unordered_map>
@@ -164,5 +163,3 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace pnmc::pn
-
-#endif // _PNMC_PN_NET_HH_

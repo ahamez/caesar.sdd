@@ -1,5 +1,4 @@
-#ifndef _PNMC_MC_UNITS_WORKER_HH_
-#define _PNMC_MC_UNITS_WORKER_HH_
+#pragma once
 
 #include "conf/configuration.hh"
 #include "mc/mc_impl.hh"
@@ -22,5 +21,3 @@ struct worker
 /*------------------------------------------------------------------------------------------------*/
 
 }}} // namespace pnmc::mc::units
-
-#endif // _PNMC_MC_UNITS_WORKER_HH_

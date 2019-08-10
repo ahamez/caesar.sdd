@@ -1,10 +1,9 @@
-#ifndef _PNMC_CONF_CONFIGURATION_HH_
-#define _PNMC_CONF_CONFIGURATION_HH_
+#pragma once
 
 #include <string>
 
 namespace pnmc { namespace conf {
-  
+
 /*------------------------------------------------------------------------------------------------*/
 
 struct pnmc_configuration
@@ -29,5 +28,3 @@ struct pnmc_configuration
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace pnmc::configuration
-
-#endif // _PNMC_CONF_CONFIGURATION_HH_

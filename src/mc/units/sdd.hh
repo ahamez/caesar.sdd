@@ -1,5 +1,4 @@
-#ifndef _PNMC_MC_SDD_HH_
-#define _PNMC_MC_SDD_HH_
+#pragma once
 
 #include <sdd/sdd.hh>
 
@@ -30,5 +29,3 @@ using order            = sdd::order<sdd_conf>;
 /*------------------------------------------------------------------------------------------------*/
 
 }}} // namespace pnmc::mc::units
-
-#endif // _PNMC_MC_SDD_HH_

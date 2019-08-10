@@ -1,5 +1,4 @@
-#ifndef _PNMC_MC_UNITS_NOPOST_LIVE_HH_
-#define _PNMC_MC_UNITS_NOPOST_LIVE_HH_
+#pragma once
 
 #include <functional> // hash
 #include <iosfwd>
@@ -54,5 +53,3 @@ struct hash<pnmc::mc::units::nopost_live>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _PNMC_MC_UNITS_NOPOST_LIVE_HH_

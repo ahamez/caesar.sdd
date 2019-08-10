@@ -1,5 +1,4 @@
-#ifndef _PNMC_PN_UNIT_HH_
-#define _PNMC_PN_UNIT_HH_
+#pragma once
 
 #include <functional>
 #include <iosfwd>
@@ -40,7 +39,5 @@ std::ostream&
 operator<<(std::ostream&, const unit&);
 
 /*------------------------------------------------------------------------------------------------*/
-  
-}} // namespace pnmc::pn
 
-#endif // _PNMC_PN_UNIT_HH_
+}} // namespace pnmc::pn

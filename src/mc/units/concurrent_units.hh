@@ -1,5 +1,4 @@
-#ifndef _PNMC_MC_UNITS_CONCURRENT_UNITS_HH_
-#define _PNMC_MC_UNITS_CONCURRENT_UNITS_HH_
+#pragma once
 
 #include "conf/configuration.hh"
 #include "mc/units/sdd.hh"
@@ -21,5 +20,3 @@ compute_concurrent_units( const conf::pnmc_configuration&, const pn::net&
 /*------------------------------------------------------------------------------------------------*/
 
 }}} // namespace pnmc::mc::units
-
-#endif // _PNMC_MC_UNITS_CONCURRENT_UNITS_HH_

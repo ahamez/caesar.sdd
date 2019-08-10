@@ -1,5 +1,4 @@
-#ifndef _PNMC_MC_UNITS_PRE_HH_
-#define _PNMC_MC_UNITS_PRE_HH_
+#pragma once
 
 #include <functional> // hash
 #include <iosfwd>
@@ -46,5 +45,3 @@ struct hash<pnmc::mc::units::pre>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _PNMC_MC_UNITS_PRE_HH_
