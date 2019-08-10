@@ -16,6 +16,7 @@
 #include "mc/units/sdd.hh"
 #include "mc/units/worker.hh"
 
+#include "compress/compress.hh"
 
 namespace pnmc { namespace mc { namespace units {
 
@@ -162,7 +163,7 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
     if (transition.post.empty() and transition.pre.empty() and conf.compute_dead_transitions)
     {
       // Empty transition, but we need to increment the transition counter.
-      ++tindex;
+      transitions_bitset[tindex++] = true;
     }
     else if (not transition.post.empty())
     {
@@ -193,10 +194,11 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
     }
     else if (conf.compute_dead_transitions)
     {
+      // Sink transition : Card(Pre) > 0 and Card(Post) = 0
       // Target the same variable as the pre that is fired just before this fake post.
-      const auto unit = transition.pre.begin()->first;
-
+      const auto unit = net.unit_of_place(transition.pre.begin()->first);
       const auto f = function(o, unit, nopost_live{tindex++, transitions_bitset});
+
       h_t = composition(h_t, sdd::carrier(o, unit, f));
     }
 
@@ -288,12 +290,14 @@ const
     std::cout << m.size().template convert_to<long double>() << " states\n";
   }
 
-  if (conf.compute_dead_transitions)
+  if (conf.compute_dead_transitions and net.transitions().size())
   {
+    caesar_compress::compress compressor;
     for (std::size_t i = 0; i < net.transitions().size(); ++i)
     {
-      std::cout << (!transitions_bitset[i]) << "\n";
+      compressor.dump_compression(transitions_bitset[i] ? '0' : '1');
     }
+    compressor.dump_compression('\n');
   }
 
   if (conf.compute_concurrent_units)

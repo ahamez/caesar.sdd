@@ -32,15 +32,15 @@ constexpr auto order_force_str = "order-force";
 constexpr auto order_force_iterations_str = "order-force-iterations";
 
 // Petri net options
-constexpr auto check_safe_net_str = "check-1-safe";
+constexpr auto check_safe_net_str = "check";
 
 // Statistics options
 constexpr auto show_nb_states_str = "show-nb-states";
 constexpr auto show_time_str = "show-time";
 
 // CADP options
-constexpr auto dead_str = "dead";
-constexpr auto unit_str = "unit";
+constexpr auto dead_str = "dead-transitions";
+constexpr auto unit_str = "concurrent-units";
 
 boost::optional<pnmc_configuration>
 fill_configuration(int argc, char** argv)
