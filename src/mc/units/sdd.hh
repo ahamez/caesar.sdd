@@ -2,7 +2,7 @@
 
 #include <sdd/sdd.hh>
 
-namespace pnmc { namespace mc { namespace units {
+namespace caesar { namespace mc { namespace units {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -28,4 +28,4 @@ using order            = sdd::order<sdd_conf>;
 
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace pnmc::mc::units
+}}} // namespace caesar::mc::units

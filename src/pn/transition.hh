@@ -3,7 +3,7 @@
 #include <iosfwd>
 #include <map>
 
-namespace pnmc { namespace pn {
+namespace caesar { namespace pn {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -37,4 +37,4 @@ operator<<(std::ostream&, const transition&);
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::pn
+}} // namespace caesar::pn

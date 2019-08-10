@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 
-namespace pnmc { namespace pn {
+namespace caesar { namespace pn {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -50,4 +50,4 @@ operator<<(std::ostream& os, const place& p);
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::pn
+}} // namespace caesar::pn

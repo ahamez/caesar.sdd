@@ -3,7 +3,7 @@
 #include "mc/units/pre.hh"
 #include "sdd/util/hash.hh"
 
-namespace pnmc { namespace mc { namespace units {
+namespace caesar { namespace mc { namespace units {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -46,14 +46,14 @@ noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace pnmc::mc::units
+}}} // namespace caesar::mc::units
 
 namespace std {
 
 /*------------------------------------------------------------------------------------------------*/
 
 std::size_t
-hash<pnmc::mc::units::pre>::operator()(const pnmc::mc::units::pre& p)
+hash<caesar::mc::units::pre>::operator()(const caesar::mc::units::pre& p)
 const noexcept
 {
   using namespace sdd::hash;

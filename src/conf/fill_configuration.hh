@@ -4,13 +4,13 @@
 
 #include "conf/configuration.hh"
 
-namespace pnmc { namespace conf {
+namespace caesar { namespace conf {
 
 /*------------------------------------------------------------------------------------------------*/
 
-boost::optional<pnmc_configuration>
+boost::optional<caesar_configuration>
 fill_configuration(int, char**);
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::conf
+}} // namespace caesar::conf

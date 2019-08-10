@@ -13,14 +13,14 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-namespace pnmc {
+namespace caesar {
 
 struct unreadable_file
   : std::exception
 {};
 
 std::shared_ptr<std::istream>
-file_or_cin(const conf::pnmc_configuration& conf)
+file_or_cin(const conf::caesar_configuration& conf)
 {
   if (conf.read_stdin)
   {
@@ -35,19 +35,19 @@ file_or_cin(const conf::pnmc_configuration& conf)
       throw unreadable_file();
     }
     return ptr;
-  } 
+  }
 }
 
-} // namespace pnmc
+} // namespace caesar
 
 /*------------------------------------------------------------------------------------------------*/
 
 int
 main(int argc, char** argv)
 {
-  using namespace pnmc;
+  using namespace caesar;
 
-  boost::optional<conf::pnmc_configuration> conf_opt;
+  boost::optional<conf::caesar_configuration> conf_opt;
   try
   {
     conf_opt = conf::fill_configuration(argc, argv);

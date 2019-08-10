@@ -4,7 +4,7 @@
 #include "mc/units/sdd.hh"
 #include "pn/net.hh"
 
-namespace pnmc { namespace mc { namespace units {
+namespace caesar { namespace mc { namespace units {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -14,9 +14,9 @@ query(const pn::net&, const SDD&, const order&, unsigned int, unsigned int);
 /*------------------------------------------------------------------------------------------------*/
 
 void
-compute_concurrent_units( const conf::pnmc_configuration&, const pn::net&
+compute_concurrent_units( const conf::caesar_configuration&, const pn::net&
                         , const sdd::order<sdd_conf>&, const SDD&);
 
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace pnmc::mc::units
+}}} // namespace caesar::mc::units

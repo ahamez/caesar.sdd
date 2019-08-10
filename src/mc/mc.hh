@@ -6,7 +6,7 @@
 #include "mc/mc_impl.hh"
 #include "pn/net.hh"
 
-namespace pnmc { namespace mc {
+namespace caesar { namespace mc {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -18,7 +18,7 @@ private:
 
 public:
 
-  mc(const conf::pnmc_configuration&);
+  mc(const conf::caesar_configuration&);
 
   void
   operator()(const pn::net&)
@@ -28,9 +28,9 @@ private:
 
   static
   std::unique_ptr<mc_impl>
-  mk_impl(const conf::pnmc_configuration&);
+  mk_impl(const conf::caesar_configuration&);
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::mc
+}} // namespace caesar::mc

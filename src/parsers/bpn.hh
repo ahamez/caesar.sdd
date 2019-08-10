@@ -5,7 +5,7 @@
 
 #include "pn/net.hh"
 
-namespace pnmc { namespace parsers {
+namespace caesar { namespace parsers {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -14,4 +14,4 @@ bpn(std::istream&);
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // pnmc::parsers
+}} // caesar::parsers

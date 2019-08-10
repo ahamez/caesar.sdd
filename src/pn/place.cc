@@ -2,7 +2,7 @@
 
 #include "pn/place.hh"
 
-namespace pnmc { namespace pn {
+namespace caesar { namespace pn {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -46,4 +46,4 @@ operator<<(std::ostream& os, const pn::place& p)
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // pnmc::pn
+}} // caesar::pn

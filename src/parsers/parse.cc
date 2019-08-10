@@ -3,8 +3,8 @@
 #include "parsers/bpn.hh"
 #include "parsers/parse.hh"
 
-namespace pnmc { namespace parsers {
-  
+namespace caesar { namespace parsers {
+
 /*------------------------------------------------------------------------------------------------*/
 
 std::shared_ptr<pn::net>
@@ -15,4 +15,4 @@ parse(std::istream& in)
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::parsers
+}} // namespace caesar::parsers

@@ -8,7 +8,7 @@
 #include "sdd/values/flat_set.hh"
 #include "sdd/values_manager.hh"
 
-namespace pnmc { namespace mc { namespace units {
+namespace caesar { namespace mc { namespace units {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -38,16 +38,16 @@ operator<<(std::ostream&, const nopost_live&);
 
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace pnmc::mc::units
+}}} // namespace caesar::mc::units
 
 namespace std {
 
 /*------------------------------------------------------------------------------------------------*/
 
 template <>
-struct hash<pnmc::mc::units::nopost_live>
+struct hash<caesar::mc::units::nopost_live>
 {
-  std::size_t operator()(const pnmc::mc::units::nopost_live&) const noexcept;
+  std::size_t operator()(const caesar::mc::units::nopost_live&) const noexcept;
 };
 
 /*------------------------------------------------------------------------------------------------*/

@@ -1,18 +1,18 @@
 #include "mc/mc.hh"
 #include "mc/units/worker.hh"
 
-namespace pnmc { namespace mc {
+namespace caesar { namespace mc {
 
 /*------------------------------------------------------------------------------------------------*/
 
-mc::mc(const conf::pnmc_configuration& conf)
+mc::mc(const conf::caesar_configuration& conf)
   : impl_(mk_impl(conf))
 {}
 
 /*------------------------------------------------------------------------------------------------*/
 
 std::unique_ptr<mc_impl>
-mc::mk_impl(const conf::pnmc_configuration& conf)
+mc::mk_impl(const conf::caesar_configuration& conf)
 {
   return std::unique_ptr<mc_impl>(new units::worker(conf));
 }
@@ -28,4 +28,4 @@ const
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::mc
+}} // namespace caesar::mc

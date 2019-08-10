@@ -9,7 +9,7 @@
 #include "parsers/parse_error.hh"
 #include "pn/unit.hh"
 
-namespace pnmc { namespace parsers { namespace /* anonymous */ {
+namespace caesar { namespace parsers { namespace /* anonymous */ {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -378,4 +378,4 @@ bpn(std::istream& in)
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::parsers
+}} // namespace caesar::parsers

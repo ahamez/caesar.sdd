@@ -26,7 +26,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-namespace caesar_compress {
+namespace caesar {
 
 class compress
 {
@@ -39,4 +39,4 @@ public:
   void dump_compression(char CELL);
 };
 
-} // namespace caesar_compress
+} // namespace caesar

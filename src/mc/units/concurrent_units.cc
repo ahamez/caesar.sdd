@@ -11,7 +11,7 @@
 
 #include "compress/compress.hh"
 
-namespace pnmc { namespace mc { namespace units {
+namespace caesar { namespace mc { namespace units {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -301,12 +301,12 @@ query(const pn::net& net, const SDD& states, const order& o, unsigned int i, uns
 /*------------------------------------------------------------------------------------------------*/
 
 void
-compute_concurrent_units( const conf::pnmc_configuration& conf, const pn::net& net
+compute_concurrent_units( const conf::caesar_configuration& conf, const pn::net& net
                         , const sdd::order<sdd_conf>& o, const SDD& states)
 {
   namespace chrono = std::chrono;
   chrono::time_point<chrono::system_clock> start = chrono::system_clock::now();
-  caesar_compress::compress compressor;
+  compress compressor;
 
   const auto nb_units = net.units().size();
   unsigned int j_end = 1;
@@ -337,4 +337,4 @@ compute_concurrent_units( const conf::pnmc_configuration& conf, const pn::net& n
 
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace pnmc::mc::units
+}}} // namespace caesar::mc::units

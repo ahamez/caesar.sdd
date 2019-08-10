@@ -18,14 +18,14 @@
 
 #include "compress/compress.hh"
 
-namespace pnmc { namespace mc { namespace units {
+namespace caesar { namespace mc { namespace units {
 
 namespace chrono = std::chrono;
 
 /*------------------------------------------------------------------------------------------------*/
 
 order
-mk_order(const conf::pnmc_configuration& conf, const pn::net& net)
+mk_order(const conf::caesar_configuration& conf, const pn::net& net)
 {
   std::vector<unsigned int> units;
   units.reserve(net.units().size());
@@ -85,7 +85,7 @@ mk_order(const conf::pnmc_configuration& conf, const pn::net& net)
           identifiers.push_back(u);
         }
       }
-      
+
       for (const auto& arc : transition.post)
       {
         const auto u = net.unit_of_place(arc.first);
@@ -95,7 +95,7 @@ mk_order(const conf::pnmc_configuration& conf, const pn::net& net)
         }
       }
       graph.add_hyperedge(identifiers.cbegin(), identifiers.cend());
-      
+
       // We use this container again in the next loop.
       identifiers.clear();
       identifiers_added.clear();
@@ -141,7 +141,7 @@ initial_state(const order& o, const pn::net& net)
 /*------------------------------------------------------------------------------------------------*/
 
 homomorphism
-transition_relation( const conf::pnmc_configuration& conf, const order& o
+transition_relation( const conf::caesar_configuration& conf, const order& o
                    , const pn::net& net, boost::dynamic_bitset<>& transitions_bitset)
 {
   chrono::time_point<chrono::system_clock> start;
@@ -235,7 +235,7 @@ transition_relation( const conf::pnmc_configuration& conf, const order& o
 /*------------------------------------------------------------------------------------------------*/
 
 SDD
-state_space( const conf::pnmc_configuration& conf, const order& o, SDD m
+state_space( const conf::caesar_configuration& conf, const order& o, SDD m
            , homomorphism h)
 {
   chrono::time_point<chrono::system_clock> start = chrono::system_clock::now();
@@ -251,7 +251,7 @@ state_space( const conf::pnmc_configuration& conf, const order& o, SDD m
 
 /*------------------------------------------------------------------------------------------------*/
 
-worker::worker(const conf::pnmc_configuration& c)
+worker::worker(const conf::caesar_configuration& c)
   : conf(c)
 {}
 
@@ -292,7 +292,7 @@ const
 
   if (conf.compute_dead_transitions and net.transitions().size())
   {
-    caesar_compress::compress compressor;
+    compress compressor;
     for (std::size_t i = 0; i < net.transitions().size(); ++i)
     {
       compressor.dump_compression(transitions_bitset[i] ? '0' : '1');
@@ -308,4 +308,4 @@ const
 
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace pnmc::mc::units
+}}} // namespace caesar::mc::units

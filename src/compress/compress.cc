@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
 #include "compress.hh"
 
-namespace caesar_compress {
+namespace caesar {
 
 /*---------------------------------------------------------------------------*/
 
@@ -66,4 +66,4 @@ void compress::dump_compression(char CELL)
   }
 }
 
-} // namespace caesar_compress
+} // namespace caesar

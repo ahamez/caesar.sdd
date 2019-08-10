@@ -2,11 +2,11 @@
 
 #include <string>
 
-namespace pnmc { namespace conf {
+namespace caesar { namespace conf {
 
 /*------------------------------------------------------------------------------------------------*/
 
-struct pnmc_configuration
+struct caesar_configuration
 {
   std::string file_name;
   bool read_stdin;
@@ -27,4 +27,4 @@ struct pnmc_configuration
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::configuration
+}} // namespace caesar::configuration

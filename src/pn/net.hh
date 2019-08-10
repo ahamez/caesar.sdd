@@ -19,7 +19,7 @@
 #include "pn/transition.hh"
 #include "pn/unit.hh"
 
-namespace pnmc { namespace pn {
+namespace caesar { namespace pn {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -162,4 +162,4 @@ public:
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::pn
+}} // namespace caesar::pn

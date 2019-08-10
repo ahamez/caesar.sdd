@@ -11,7 +11,7 @@
 #include "conf/configuration.hh"
 #include "conf/fill_configuration.hh"
 
-namespace pnmc { namespace conf {
+namespace caesar { namespace conf {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -42,10 +42,10 @@ constexpr auto show_time_str = "show-time";
 constexpr auto dead_str = "dead-transitions";
 constexpr auto unit_str = "concurrent-units";
 
-boost::optional<pnmc_configuration>
+boost::optional<caesar_configuration>
 fill_configuration(int argc, char** argv)
 {
-  pnmc_configuration conf;
+  caesar_configuration conf;
 
   po::options_description general_options("General options");
   general_options.add_options()
@@ -82,7 +82,7 @@ fill_configuration(int argc, char** argv)
 
   po::positional_options_description p;
   p.add("input-file", 1);
-  
+
   po::options_description cmdline_options;
   cmdline_options
   	.add(general_options)
@@ -91,7 +91,7 @@ fill_configuration(int argc, char** argv)
     .add(cadp_options)
     .add(stats_options)
   	.add(hidden_options);
-  
+
   po::variables_map vm;
   po::parsed_options parsed = po::command_line_parser(argc, argv)
                                     .options(cmdline_options)
@@ -101,10 +101,10 @@ fill_configuration(int argc, char** argv)
                                     .run();
   po::store(parsed, vm);
   po::notify(vm);
-  
+
   std::vector<std::string> unrecognized
     = po::collect_unrecognized(parsed.options,po::exclude_positional);
-  
+
   if (vm.count(help_str) or unrecognized.size() > 0)
   {
     std::cout << version << std::endl;
@@ -114,13 +114,13 @@ fill_configuration(int argc, char** argv)
     std::cout << pn_options << std::endl;
     std::cout << cadp_options << std::endl;
     std::cout << stats_options << std::endl;
-    return boost::optional<pnmc_configuration>();
+    return boost::optional<caesar_configuration>();
   }
-  
+
   if (vm.count("version"))
   {
     std::cout << version << std::endl;
-    return boost::optional<pnmc_configuration>();
+    return boost::optional<caesar_configuration>();
   }
 
   conf.read_stdin = (not vm.count("input-file") or vm["input-file"].as<std::string>() == "-");
@@ -141,4 +141,4 @@ fill_configuration(int argc, char** argv)
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::conf
+}} // namespace caesar::conf

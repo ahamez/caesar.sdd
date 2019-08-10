@@ -1,6 +1,6 @@
 #include "parse_error.hh"
 
-namespace pnmc { namespace parsers {
+namespace caesar { namespace parsers {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -27,4 +27,4 @@ const noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::parsers
+}} // namespace caesar::parsers

@@ -2,7 +2,7 @@
 
 #include "pn/transition.hh"
 
-namespace pnmc { namespace pn {
+namespace caesar { namespace pn {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -35,10 +35,10 @@ operator<<(std::ostream& os, const transition& t)
   for(auto p : t.post)
   {
     os << " (" << p.first << ", " << p.second << ")";
-  }  
+  }
   return os;
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::pn
+}} // namespace caesar::pn

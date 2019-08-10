@@ -7,7 +7,7 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-using namespace pnmc::mc::units;
+using namespace caesar::mc::units;
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -60,7 +60,7 @@ TEST_F(concurrent_units_test, no_nested_units)
     transitions #0 0...0\n\
     ";
   std::istringstream stream0(bpn_desc0);
-  const auto net0_ptr = pnmc::parsers::bpn(stream0);
+  const auto net0_ptr = caesar::parsers::bpn(stream0);
 
   {
     const order o(order_builder{3,2,1,0});

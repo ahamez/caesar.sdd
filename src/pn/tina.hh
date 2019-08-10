@@ -5,7 +5,7 @@
 
 #include "pn/net.hh"
 
-namespace pnmc { namespace pn {
+namespace caesar { namespace pn {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -15,4 +15,4 @@ tina(std::ostream&, const net&);
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::pn
+}} // namespace caesar::pn

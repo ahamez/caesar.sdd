@@ -8,7 +8,7 @@
 
 #include "mc/units/exceptions.hh"
 
-namespace pnmc { namespace mc { namespace units {
+namespace caesar { namespace mc { namespace units {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -141,17 +141,17 @@ using post_live_safe = post_safe_mixin<post_live_mixin<post>>;
 
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace pnmc::mc::units
+}}} // namespace caesar::mc::units
 
 namespace std {
 
 /*------------------------------------------------------------------------------------------------*/
 
 template<>
-struct hash<pnmc::mc::units::post>
+struct hash<caesar::mc::units::post>
 {
   std::size_t
-  operator()(const pnmc::mc::units::post& p)
+  operator()(const caesar::mc::units::post& p)
   const noexcept
   {
     using namespace sdd::hash;
@@ -160,12 +160,12 @@ struct hash<pnmc::mc::units::post>
 };
 
 /*------------------------------------------------------------------------------------------------*/
-  
+
 template<typename T>
-struct hash<pnmc::mc::units::post_live_mixin<T>>
+struct hash<caesar::mc::units::post_live_mixin<T>>
 {
   std::size_t
-  operator()(const pnmc::mc::units::post_live_mixin<T>& p)
+  operator()(const caesar::mc::units::post_live_mixin<T>& p)
   const noexcept
   {
     return p.hash();
@@ -173,12 +173,12 @@ struct hash<pnmc::mc::units::post_live_mixin<T>>
 };
 
 /*------------------------------------------------------------------------------------------------*/
-  
+
 template<typename T>
-struct hash<pnmc::mc::units::post_safe_mixin<T>>
+struct hash<caesar::mc::units::post_safe_mixin<T>>
 {
   std::size_t
-  operator()(const pnmc::mc::units::post_safe_mixin<T>& p)
+  operator()(const caesar::mc::units::post_safe_mixin<T>& p)
   const noexcept
   {
     return p.hash();

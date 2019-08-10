@@ -2,7 +2,7 @@
 #include "pn/place.hh"
 #include "pn/transition.hh"
 
-namespace pnmc { namespace pn {
+namespace caesar { namespace pn {
 
 namespace /* anonymous */ {
 
@@ -294,4 +294,4 @@ const noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::pn
+}} // namespace caesar::pn

@@ -3,7 +3,7 @@
 #include <exception>
 #include <string>
 
-namespace pnmc { namespace parsers {
+namespace caesar { namespace parsers {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -26,4 +26,4 @@ public:
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::parsers
+}} // namespace caesar::parsers

@@ -3,7 +3,7 @@
 
 #include "pn/unit.hh"
 
-namespace pnmc { namespace pn {
+namespace caesar { namespace pn {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -48,4 +48,4 @@ operator<<(std::ostream& os, const unit& u)
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::pn
+}} // namespace caesar::pn

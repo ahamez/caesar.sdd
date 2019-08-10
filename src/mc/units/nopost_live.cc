@@ -2,7 +2,7 @@
 
 #include "mc/units/nopost_live.hh"
 
-namespace pnmc { namespace mc { namespace units {
+namespace caesar { namespace mc { namespace units {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -39,14 +39,14 @@ operator==(const nopost_live& lhs, const nopost_live& rhs) noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace pnmc::mc::units
+}}} // namespace caesar::mc::units
 
 namespace std {
 
 /*------------------------------------------------------------------------------------------------*/
 
 std::size_t
-hash<pnmc::mc::units::nopost_live>::operator()(const pnmc::mc::units::nopost_live& p)
+hash<caesar::mc::units::nopost_live>::operator()(const caesar::mc::units::nopost_live& p)
 const noexcept
 {
   return sdd::hash::seed(p.transition);

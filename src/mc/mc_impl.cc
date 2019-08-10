@@ -1,6 +1,6 @@
 #include "mc/mc_impl.hh"
 
-namespace pnmc { namespace mc {
+namespace caesar { namespace mc {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -9,4 +9,4 @@ mc_impl::~mc_impl()
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace pnmc::mc
+}} // namespace caesar::mc
