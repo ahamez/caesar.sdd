@@ -77,4 +77,7 @@ include_directories("${LIBSDD_INCLUDE_DIR}")
 
 add_subdirectory(src)
 
+enable_testing()
+add_subdirectory(tests)
+
 #--------------------------------------------------------------------------------------------------#
