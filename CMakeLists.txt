@@ -69,6 +69,7 @@ endif()
 #--------------------------------------------------------------------------------------------------#
 
 include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
+include_directories(SYSTEM "${PROJECT_SOURCE_DIR}/ext")
 include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${LIBSDD_INCLUDE_DIR}")
 
