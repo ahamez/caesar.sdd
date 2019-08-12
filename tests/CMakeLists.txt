@@ -13,4 +13,5 @@ set(SOURCES
     )
 
 add_executable(tests ${SOURCES})
+target_link_libraries(tests ${Boost_LIBRARIES})
 add_test("UnitTests" tests)
